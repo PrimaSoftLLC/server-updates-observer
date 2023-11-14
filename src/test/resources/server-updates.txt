@@ -1,1 +1,0 @@
-server-updates.file-path=./src/main/resources/server-updates.txt

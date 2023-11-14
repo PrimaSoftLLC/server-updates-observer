@@ -20,7 +20,7 @@ public final class DeserializationUtil {
                     .takeWhile(Optional::isPresent)
                     .map(Optional::get)
                     .toList();
-        } catch (final EOFException noObjectsInFileException) {
+        } catch (final EOFException noObjectsException) {
             return emptyList();
         } catch (final IOException cause) {
             throw new DeserializationException(cause);
