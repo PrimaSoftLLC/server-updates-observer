@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -25,16 +27,16 @@ public class ServerUpdateController {
     private final ServerUpdateService updateService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestParam(name = "serverName") final String serverName,
-                                  @RequestParam(name = "downtime") final int downtimeInMinutes,
-                                  @RequestParam(name = "lifetime", defaultValue = "10") final int lifetimeInMinutes) {
+    public ResponseEntity<?> save(@RequestParam(name = "serverName") @NotBlank final String serverName,
+                                  @RequestParam(name = "downtime") @Min(1) final int downtimeInMinutes,
+                                  @RequestParam(name = "lifetime", defaultValue = "10") @Min(1) final int lifetimeInMinutes) {
         final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, lifetimeInMinutes);
         this.updateService.save(update);
         return noContent();
     }
 
     @GetMapping
-    public ResponseEntity<Instant> findAliveUpdateDowntime(@RequestParam(name = "serverName") final String serverName) {
+    public ResponseEntity<Instant> findAliveUpdateDowntime(@RequestParam(name = "serverName") @NotBlank final String serverName) {
         return this.updateService.findAliveUpdateDowntime(serverName)
                 .map(datetime -> ok(datetime, ALIVE_UPDATE_DOWNTIME_CACHE_DURATION))
                 .orElseGet(ResponseEntityUtil::noContent);
