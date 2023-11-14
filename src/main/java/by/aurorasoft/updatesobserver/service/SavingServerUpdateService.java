@@ -6,11 +6,8 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 
-import static by.aurorasoft.updatesobserver.util.SerializationUtil.createObjectOutputStream;
 import static by.aurorasoft.updatesobserver.util.SerializationUtil.writeObjects;
 
 @Service
@@ -26,34 +23,7 @@ public final class SavingServerUpdateService {
 
     @EventListener(ContextClosedEvent.class)
     public void saveUpdates() {
-        try (final ObjectOutputStream outputStream = createObjectOutputStream(this.updateFilePath)) {
-            final Collection<ServerUpdate> updates = this.updateService.findAll();
-            writeObjects(outputStream, updates);
-        } catch (final IOException cause) {
-            throw new SavingServerUpdateException(cause);
-        }
-    }
-
-    static final class SavingServerUpdateException extends RuntimeException {
-
-        @SuppressWarnings("unused")
-        public SavingServerUpdateException() {
-
-        }
-
-        @SuppressWarnings("unused")
-        public SavingServerUpdateException(final String description) {
-            super(description);
-        }
-
-        public SavingServerUpdateException(final Exception cause) {
-            super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public SavingServerUpdateException(final String description, final Exception cause) {
-            super(description, cause);
-        }
-
+        final Collection<ServerUpdate> updates = this.updateService.findAll();
+        writeObjects(this.updateFilePath, updates);
     }
 }
