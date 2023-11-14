@@ -8,13 +8,11 @@ import org.mockito.MockedStatic;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.createObjectOutputStream;
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.writeObjects;
+import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.*;
 import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
 import static org.junit.Assert.assertSame;
 import static org.mockito.ArgumentMatchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 
 public final class ServerUpdateSerializerTest {
     private static final String FIELD_NAME_OUTPUT_STREAM = "outputStream";
@@ -45,7 +43,22 @@ public final class ServerUpdateSerializerTest {
             );
             givenSerializer.serialize(givenUpdates);
 
-            mockedStreamUtil.verify(() -> writeObjects(same(givenOutputStream), same(givenUpdates)));
+            mockedStreamUtil.verify(
+                    () -> writeObjects(same(givenOutputStream), same(givenUpdates)),
+                    times(1)
+            );
+        }
+    }
+
+    @Test
+    public void serializerShouldBeClosed() {
+        try (final MockedStatic<OutputStreamUtil> mockedStreamUtil = mockStatic(OutputStreamUtil.class)) {
+            final ObjectOutputStream givenOutputStream = mock(ObjectOutputStream.class);
+            final ServerUpdateSerializer givenSerializer = createSerializer(givenOutputStream, mockedStreamUtil);
+
+            givenSerializer.close();
+
+            mockedStreamUtil.verify(() -> closeStream(same(givenOutputStream)), times(1));
         }
     }
 
