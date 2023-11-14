@@ -8,14 +8,14 @@ import java.util.List;
 
 @Component
 public final class ServerUpdateLoader {
-    private final String filePath;
+    private final String updateFilePath;
 
-    public ServerUpdateLoader(@Value("${server-updates.file-path}") final String filePath) {
-        this.filePath = filePath;
+    public ServerUpdateLoader(@Value("${server-updates.file-path}") final String updateFilePath) {
+        this.updateFilePath = updateFilePath;
     }
 
     public List<ServerUpdate> load() {
-        try (final ServerUpdateDeserializer deserializer = new ServerUpdateDeserializer(this.filePath)) {
+        try (final ServerUpdateDeserializer deserializer = new ServerUpdateDeserializer(this.updateFilePath)) {
             return deserializer.deserialize();
         }
     }
