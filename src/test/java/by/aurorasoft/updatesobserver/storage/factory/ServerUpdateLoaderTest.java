@@ -1,19 +1,16 @@
 package by.aurorasoft.updatesobserver.storage.factory;
 
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
-import by.aurorasoft.updatesobserver.storage.factory.ServerUpdateLoader.ServerUpdateLoadingException;
 import by.aurorasoft.updatesobserver.util.DeserializationUtil;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.List;
 
-import static by.aurorasoft.updatesobserver.util.DeserializationUtil.createObjectInputStream;
 import static by.aurorasoft.updatesobserver.util.DeserializationUtil.readObjects;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.same;
 
 public final class ServerUpdateLoaderTest {
     private static final String GIVEN_FILE_PATH = "file-path";
@@ -21,43 +18,17 @@ public final class ServerUpdateLoaderTest {
     private final ServerUpdateLoader loader = new ServerUpdateLoader(GIVEN_FILE_PATH);
 
     @Test
-    public void updatesShouldBeLoaded()
-            throws IOException {
-        try (final MockedStatic<DeserializationUtil> mockedStreamUtil = mockStatic(DeserializationUtil.class)) {
-            final ObjectInputStream givenInputStream = mock(ObjectInputStream.class);
-            mockedStreamUtil.when(() -> createObjectInputStream(same(GIVEN_FILE_PATH))).thenReturn(givenInputStream);
-
+    public void updatesShouldBeLoaded() {
+        try (final MockedStatic<DeserializationUtil> mockedDeserializationUtil = mockStatic(DeserializationUtil.class)) {
             final List<ServerUpdate> givenUpdates = List.of(
                     createUpdate("first-server"),
                     createUpdate("second-server")
             );
-            mockedStreamUtil.when(() -> readObjects(same(givenInputStream), same(ServerUpdate.class)))
+            mockedDeserializationUtil.when(() -> readObjects(same(GIVEN_FILE_PATH), same(ServerUpdate.class)))
                     .thenReturn(givenUpdates);
 
             final List<ServerUpdate> actual = this.loader.load();
             assertSame(givenUpdates, actual);
-
-            verify(givenInputStream, times(1)).close();
-        }
-    }
-
-    @Test(expected = ServerUpdateLoadingException.class)
-    public void updatesShouldNotBeLoadedBecauseOfExceptionWhileClosingStream()
-            throws Exception {
-        try (final MockedStatic<DeserializationUtil> mockedStreamUtil = mockStatic(DeserializationUtil.class)) {
-            final ObjectInputStream givenInputStream = mock(ObjectInputStream.class);
-            mockedStreamUtil.when(() -> createObjectInputStream(same(GIVEN_FILE_PATH))).thenReturn(givenInputStream);
-
-            final List<ServerUpdate> givenUpdates = List.of(
-                    createUpdate("first-server"),
-                    createUpdate("second-server")
-            );
-            mockedStreamUtil.when(() -> readObjects(same(givenInputStream), same(ServerUpdate.class)))
-                    .thenReturn(givenUpdates);
-
-            doThrow(IOException.class).when(givenInputStream).close();
-
-            this.loader.load();
         }
     }
 
