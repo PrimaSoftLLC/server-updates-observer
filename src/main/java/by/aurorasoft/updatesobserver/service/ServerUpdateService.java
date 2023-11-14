@@ -22,9 +22,10 @@ public final class ServerUpdateService {
         this.updateStorage.save(update);
     }
 
-    public Optional<ServerUpdate> findAliveUpdate(final String serverName) {
-        final Optional<ServerUpdate> update = this.updateStorage.findByServerName(serverName);
-        return update.filter(ServerUpdateService::isAlive);
+    public Optional<Instant> findAliveUpdateDowntime(final String serverName) {
+        return this.updateStorage.findByServerName(serverName)
+                .filter(ServerUpdateService::isAlive)
+                .map(ServerUpdateService::findDowntime);
     }
 
     public Collection<ServerUpdate> findAll() {
@@ -39,9 +40,22 @@ public final class ServerUpdateService {
         return now.isBefore(endLifetime);
     }
 
+    //TODO: refactor
     private static Duration findLifeDuration(final ServerUpdate update) {
         final int downtimeInMinutes = update.getDowntimeInMinutes();
         final int lifetimeInMinutes = update.getLifetimeInMinutes();
         return Duration.of(downtimeInMinutes + lifetimeInMinutes, MINUTES);
+    }
+
+    private static Instant findDowntime(final ServerUpdate update) {
+        final Instant start = update.getStart();
+        final Duration downtimeDuration = findDowntimeDuration(update);
+        return start.plus(downtimeDuration);
+    }
+
+    //TODO: refactor
+    private static Duration findDowntimeDuration(final ServerUpdate update) {
+        final int downtimeInMinutes = update.getDowntimeInMinutes();
+        return Duration.of(downtimeInMinutes, MINUTES);
     }
 }
