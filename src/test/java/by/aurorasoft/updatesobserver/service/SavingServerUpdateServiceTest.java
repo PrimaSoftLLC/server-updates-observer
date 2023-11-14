@@ -2,9 +2,8 @@ package by.aurorasoft.updatesobserver.service;
 
 import by.aurorasoft.updatesobserver.base.AbstractContextTest;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
-import by.aurorasoft.updatesobserver.util.OutputStreamUtil;
+import by.aurorasoft.updatesobserver.util.SerializationUtil;
 import org.junit.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,8 +16,8 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.List;
 
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.createObjectOutputStream;
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.writeObjects;
+import static by.aurorasoft.updatesobserver.util.SerializationUtil.createObjectOutputStream;
+import static by.aurorasoft.updatesobserver.util.SerializationUtil.writeObjects;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -39,7 +38,7 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
     @Test
     public void updatesShouldBeSaved()
             throws Exception {
-        try (final MockedStatic<OutputStreamUtil> mockedStreamUtil = mockStatic(OutputStreamUtil.class)) {
+        try (final MockedStatic<SerializationUtil> mockedStreamUtil = mockStatic(SerializationUtil.class)) {
             final ObjectOutputStream givenOutputStream = mock(ObjectOutputStream.class);
             mockedStreamUtil.when(() -> createObjectOutputStream(eq(this.expectedUpdateFilePath)))
                     .thenReturn(givenOutputStream);

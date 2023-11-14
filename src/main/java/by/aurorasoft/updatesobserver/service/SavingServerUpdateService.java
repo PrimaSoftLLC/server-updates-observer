@@ -1,7 +1,6 @@
 package by.aurorasoft.updatesobserver.service;
 
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
-import by.aurorasoft.updatesobserver.service.ServerUpdateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
@@ -11,8 +10,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.createObjectOutputStream;
-import static by.aurorasoft.updatesobserver.util.OutputStreamUtil.writeObjects;
+import static by.aurorasoft.updatesobserver.util.SerializationUtil.createObjectOutputStream;
+import static by.aurorasoft.updatesobserver.util.SerializationUtil.writeObjects;
 
 @Service
 public final class SavingServerUpdateService {
