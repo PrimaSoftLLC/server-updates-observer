@@ -9,15 +9,16 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toConcurrentMap;
 
+//TODO: test in multithreads
 public final class ServerUpdateStorage {
     private final Map<String, ServerUpdate> updatesByServerNames;
 
     public ServerUpdateStorage(final List<ServerUpdate> updates) {
         this.updatesByServerNames = updates.stream()
                 .collect(
-                        toMap(
+                        toConcurrentMap(
                                 ServerUpdate::getServerName,
                                 identity()
                         )
