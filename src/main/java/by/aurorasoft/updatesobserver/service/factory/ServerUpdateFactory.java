@@ -10,9 +10,9 @@ import static java.time.Instant.now;
 @Component
 public final class ServerUpdateFactory {
 
-    //TODO: validate downtimeInMinutes <= lifetimeInMinutes
     public ServerUpdate create(final String serverName, final int downtimeInMinutes, final int lifetimeInMinutes) {
         final Instant start = now();
         return new ServerUpdate(serverName, start, downtimeInMinutes, lifetimeInMinutes);
     }
+
 }
