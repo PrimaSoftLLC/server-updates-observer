@@ -2,10 +2,7 @@ package by.aurorasoft.updatesobserver.util;
 
 import lombok.experimental.UtilityClass;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Collection;
 
 @UtilityClass
@@ -28,6 +25,14 @@ public final class OutputStreamUtil {
     public static void writeObject(final ObjectOutputStream outputStream, final Object object) {
         try {
             outputStream.writeObject(object);
+        } catch (final IOException cause) {
+            throw new OutputStreamException(cause);
+        }
+    }
+
+    public static void closeStream(final OutputStream outputStream) {
+        try {
+            outputStream.close();
         } catch (final IOException cause) {
             throw new OutputStreamException(cause);
         }
