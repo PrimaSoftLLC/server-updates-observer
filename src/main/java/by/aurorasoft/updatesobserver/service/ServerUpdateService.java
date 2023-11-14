@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Optional;
 
 import static java.time.Instant.now;
@@ -24,6 +25,10 @@ public final class ServerUpdateService {
     public Optional<ServerUpdate> findAliveUpdate(final String serverName) {
         final Optional<ServerUpdate> update = this.updateStorage.findByServerName(serverName);
         return update.filter(ServerUpdateService::isAlive);
+    }
+
+    public Collection<ServerUpdate> findAll() {
+        return this.updateStorage.findAll();
     }
 
     private static boolean isAlive(final ServerUpdate update) {
