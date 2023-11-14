@@ -2,7 +2,7 @@ package by.aurorasoft.updatesobserver.storage.factory;
 
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.storage.factory.ServerUpdateLoader.ServerUpdateLoadingException;
-import by.aurorasoft.updatesobserver.util.InputStreamUtil;
+import by.aurorasoft.updatesobserver.util.DeserializationUtil;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import static by.aurorasoft.updatesobserver.util.InputStreamUtil.createObjectInputStream;
-import static by.aurorasoft.updatesobserver.util.InputStreamUtil.readObjects;
+import static by.aurorasoft.updatesobserver.util.DeserializationUtil.createObjectInputStream;
+import static by.aurorasoft.updatesobserver.util.DeserializationUtil.readObjects;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
@@ -23,7 +23,7 @@ public final class ServerUpdateLoaderTest {
     @Test
     public void updatesShouldBeLoaded()
             throws IOException {
-        try (final MockedStatic<InputStreamUtil> mockedStreamUtil = mockStatic(InputStreamUtil.class)) {
+        try (final MockedStatic<DeserializationUtil> mockedStreamUtil = mockStatic(DeserializationUtil.class)) {
             final ObjectInputStream givenInputStream = mock(ObjectInputStream.class);
             mockedStreamUtil.when(() -> createObjectInputStream(same(GIVEN_FILE_PATH))).thenReturn(givenInputStream);
 
@@ -44,7 +44,7 @@ public final class ServerUpdateLoaderTest {
     @Test(expected = ServerUpdateLoadingException.class)
     public void updatesShouldNotBeLoadedBecauseOfExceptionWhileClosingStream()
             throws Exception {
-        try (final MockedStatic<InputStreamUtil> mockedStreamUtil = mockStatic(InputStreamUtil.class)) {
+        try (final MockedStatic<DeserializationUtil> mockedStreamUtil = mockStatic(DeserializationUtil.class)) {
             final ObjectInputStream givenInputStream = mock(ObjectInputStream.class);
             mockedStreamUtil.when(() -> createObjectInputStream(same(GIVEN_FILE_PATH))).thenReturn(givenInputStream);
 
