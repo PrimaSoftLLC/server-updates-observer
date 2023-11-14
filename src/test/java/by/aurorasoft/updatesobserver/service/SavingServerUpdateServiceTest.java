@@ -12,13 +12,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.ContextClosedEvent;
 
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.List;
 
-import static by.aurorasoft.updatesobserver.util.SerializationUtil.createObjectOutputStream;
 import static by.aurorasoft.updatesobserver.util.SerializationUtil.writeObjects;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public final class SavingServerUpdateServiceTest extends AbstractContextTest {
@@ -36,13 +33,8 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
     private ApplicationEventPublisher eventPublisher;
 
     @Test
-    public void updatesShouldBeSaved()
-            throws Exception {
-        try (final MockedStatic<SerializationUtil> mockedStreamUtil = mockStatic(SerializationUtil.class)) {
-            final ObjectOutputStream givenOutputStream = mock(ObjectOutputStream.class);
-            mockedStreamUtil.when(() -> createObjectOutputStream(eq(this.expectedUpdateFilePath)))
-                    .thenReturn(givenOutputStream);
-
+    public void updatesShouldBeSaved() {
+        try (final MockedStatic<SerializationUtil> mockedSerializationUtil = mockStatic(SerializationUtil.class)) {
             final Collection<ServerUpdate> givenUpdates = List.of(
                     createUpdate("first-server"),
                     createUpdate("second-server")
@@ -52,12 +44,10 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
             final ContextClosedEvent givenEvent = new ContextClosedEvent(this.context);
             this.eventPublisher.publishEvent(givenEvent);
 
-            mockedStreamUtil.verify(
-                    () -> writeObjects(same(givenOutputStream), same(givenUpdates)),
+            mockedSerializationUtil.verify(
+                    () -> writeObjects(eq(this.expectedUpdateFilePath), same(givenUpdates)),
                     times(1)
             );
-
-            verify(givenOutputStream, times(1)).close();
         }
     }
 
