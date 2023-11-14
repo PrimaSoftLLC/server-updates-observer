@@ -50,7 +50,7 @@ public final class InputStreamUtil {
         }
     }
 
-    private static final class InputStreamException extends RuntimeException {
+    static final class InputStreamException extends RuntimeException {
 
         @SuppressWarnings("unused")
         public InputStreamException() {

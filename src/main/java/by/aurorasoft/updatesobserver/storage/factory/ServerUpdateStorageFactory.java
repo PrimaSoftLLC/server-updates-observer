@@ -13,9 +13,8 @@ public final class ServerUpdateStorageFactory {
     private final ServerUpdateLoader updateLoader;
 
     public ServerUpdateStorage create() {
-//        final List<ServerUpdate> updates = this.updateLoader.load();
-//        return new ServerUpdateStorage(updates);
-        return null;
+        final List<ServerUpdate> updates = this.updateLoader.load();
+        return new ServerUpdateStorage(updates);
     }
 
 }
