@@ -1,5 +1,7 @@
 package by.aurorasoft.updatesobserver.configuration;
 
+import by.aurorasoft.updatesobserver.storage.ServerUpdateStorage;
+import by.aurorasoft.updatesobserver.storage.factory.ServerUpdateStorageFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -7,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class ServerUpdateStorageConfiguration {
 
     @Bean
-    public
+    public ServerUpdateStorage serverUpdateStorage(final ServerUpdateStorageFactory factory) {
+        return factory.create();
+    }
 
 }
