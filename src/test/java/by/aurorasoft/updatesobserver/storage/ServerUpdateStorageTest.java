@@ -1,19 +1,22 @@
-//package by.aurorasoft.updatesobserver.storage;
-//
-//import by.aurorasoft.updatesobserver.model.ServerUpdate;
-//import org.junit.Test;
-//
-//import java.util.*;
-//
-//import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
-//import static java.time.Instant.parse;
-//import static java.util.Collections.emptyList;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
-//
-//public final class ServerUpdateStorageTest {
-//    private static final String FIELD_NAME_UPDATES_BY_SERVER_NAMES = "updatesByServerNames";
-//
+package by.aurorasoft.updatesobserver.storage;
+
+import by.aurorasoft.updatesobserver.model.ServerUpdate;
+import net.jodah.expiringmap.ExpiringMap;
+import org.junit.Test;
+
+import java.util.*;
+
+import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
+import static java.time.Instant.parse;
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public final class ServerUpdateStorageTest {
+    private static final String FIELD_NAME_UPDATES_BY_SERVER_NAMES = "updatesByServerNames";
+
+
+
 //    @Test
 //    public void storageShouldBeCreated() {
 //        final ServerUpdate firstGivenUpdate = new ServerUpdate(
@@ -218,13 +221,13 @@
 //        final Collection<ServerUpdate> actual = givenStorage.findAll();
 //        assertTrue(actual.isEmpty());
 //    }
-//
-//    @SuppressWarnings("unchecked")
-//    private static Map<String, ServerUpdate> findUpdatesByServerNames(final ServerUpdateStorage storage) {
-//        return findProperty(
-//                storage,
-//                FIELD_NAME_UPDATES_BY_SERVER_NAMES,
-//                Map.class
-//        );
-//    }
-//}
+
+    @SuppressWarnings("unchecked")
+    private static ExpiringMap<String, ServerUpdate> findUpdatesByServerNames(final ServerUpdateStorage storage) {
+        return findProperty(
+                storage,
+                FIELD_NAME_UPDATES_BY_SERVER_NAMES,
+                ExpiringMap.class
+        );
+    }
+}

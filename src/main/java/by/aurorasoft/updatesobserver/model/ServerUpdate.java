@@ -15,7 +15,6 @@ import static java.time.Instant.now;
 @Builder
 public class ServerUpdate implements Serializable {
     String serverName;
-    Instant start;
     Instant downtime;
     Instant lifetime;
 
@@ -27,9 +26,5 @@ public class ServerUpdate implements Serializable {
     public long findRemainingLifetimeInMillis() {
         final Instant now = now();
         return between(now, this.lifetime).toMillis();
-    }
-
-    public long findLifetimeInMillis() {
-        return between(this.start, this.lifetime).toMillis();
     }
 }

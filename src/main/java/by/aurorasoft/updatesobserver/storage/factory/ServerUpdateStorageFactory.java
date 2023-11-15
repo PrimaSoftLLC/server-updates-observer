@@ -2,7 +2,6 @@ package by.aurorasoft.updatesobserver.storage.factory;
 
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.storage.ServerUpdateStorage;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
