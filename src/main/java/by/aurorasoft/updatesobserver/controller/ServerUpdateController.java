@@ -21,7 +21,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @RequestMapping("/serverUpdate")
 @RequiredArgsConstructor
 public class ServerUpdateController {
-    private static final Duration ALIVE_UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(1, DAYS);
+    private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(1, DAYS);
 
     private final ServerUpdateFactory updateFactory;
     private final ServerUpdateService updateService;
@@ -29,16 +29,16 @@ public class ServerUpdateController {
     @PostMapping
     public ResponseEntity<?> save(@RequestParam(name = "serverName") @NotBlank final String serverName,
                                   @RequestParam(name = "downtime") @Min(1) final int downtimeInMinutes,
-                                  @RequestParam(name = "lifetime", defaultValue = "10") @Min(1) final int lifetimeInMinutes) {
-        final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, lifetimeInMinutes);
+                                  @RequestParam(name = "extraDowntime", defaultValue = "10") @Min(1) final int extraDowntimeInMinutes) {
+        final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, extraDowntimeInMinutes);
         this.updateService.save(update);
         return noContent();
     }
 
     @GetMapping
-    public ResponseEntity<Instant> findAliveUpdateDowntime(@RequestParam(name = "serverName") @NotBlank final String serverName) {
-        return this.updateService.findAliveUpdateDowntime(serverName)
-                .map(datetime -> ok(datetime, ALIVE_UPDATE_DOWNTIME_CACHE_DURATION))
+    public ResponseEntity<Instant> findUpdateDowntime(@RequestParam(name = "serverName") @NotBlank final String serverName) {
+        return this.updateService.findUpdateDowntime(serverName)
+                .map(datetime -> ok(datetime, UPDATE_DOWNTIME_CACHE_DURATION))
                 .orElseGet(ResponseEntityUtil::noContent);
     }
 }

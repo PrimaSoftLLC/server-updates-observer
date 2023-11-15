@@ -14,5 +14,5 @@ public class ServerUpdate implements Serializable {
     String serverName;
     Instant start;
     int downtimeInMinutes;
-    int lifetimeInMinutes;
+    int extraDowntimeInMinutes;
 }

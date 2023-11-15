@@ -22,7 +22,7 @@ public final class ServerUpdateService {
         this.updateStorage.save(update);
     }
 
-    public Optional<Instant> findAliveUpdateDowntime(final String serverName) {
+    public Optional<Instant> findUpdateDowntime(final String serverName) {
         return this.updateStorage.findByServerName(serverName)
                 .filter(ServerUpdateService::isAlive)
                 .map(ServerUpdateService::findDowntime);
@@ -43,7 +43,7 @@ public final class ServerUpdateService {
     //TODO: refactor
     private static Duration findLifeDuration(final ServerUpdate update) {
         final int downtimeInMinutes = update.getDowntimeInMinutes();
-        final int lifetimeInMinutes = update.getLifetimeInMinutes();
+        final int lifetimeInMinutes = update.getExtraDowntimeInMinutes();
         return Duration.of(downtimeInMinutes + lifetimeInMinutes, MINUTES);
     }
 
