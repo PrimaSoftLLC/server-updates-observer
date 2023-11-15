@@ -9,10 +9,14 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
+
+import static by.aurorasoft.updatesobserver.util.FileUtil.isEmpty;
+import static java.util.Collections.emptyList;
 
 @Component
 public final class ServerUpdateLoader {
-    private static final TypeReference<Collection<ServerUpdate>> SERVER_UPDATES_TYPE_REFERENCE = new TypeReference<>() {
+    private static final TypeReference<List<ServerUpdate>> SERVER_UPDATES_TYPE_REFERENCE = new TypeReference<>() {
     };
 
     private final ObjectMapper objectMapper;
@@ -25,6 +29,10 @@ public final class ServerUpdateLoader {
     }
 
     public Collection<ServerUpdate> load() {
+        return !isEmpty(this.updateFile) ? this.loadUpdatesFromFile() : emptyList();
+    }
+
+    private Collection<ServerUpdate> loadUpdatesFromFile() {
         try {
             return this.objectMapper.readValue(this.updateFile, SERVER_UPDATES_TYPE_REFERENCE);
         } catch (final IOException cause) {
