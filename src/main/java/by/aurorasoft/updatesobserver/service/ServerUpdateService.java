@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.time.Instant.now;
 import static java.time.temporal.ChronoUnit.MINUTES;
 
 @Service
@@ -23,28 +22,12 @@ public final class ServerUpdateService {
     }
 
     public Optional<Instant> findUpdateDowntime(final String serverName) {
-        return this.updateStorage.findByServerName(serverName)
-                .filter(ServerUpdateService::isAlive)
-                .map(ServerUpdateService::findDowntime);
+        final Optional<ServerUpdate> optionalUpdate = this.updateStorage.findByServerName(serverName);
+        return optionalUpdate.map(ServerUpdateService::findDowntime);
     }
 
     public Collection<ServerUpdate> findAll() {
         return this.updateStorage.findAll();
-    }
-
-    private static boolean isAlive(final ServerUpdate update) {
-        final Instant updateStart = update.getStart();
-        final Duration lifeDuration = findLifeDuration(update);
-        final Instant endLifetime = updateStart.plus(lifeDuration);
-        final Instant now = now();
-        return now.isBefore(endLifetime);
-    }
-
-    //TODO: refactor
-    private static Duration findLifeDuration(final ServerUpdate update) {
-        final int downtimeInMinutes = update.getDowntimeInMinutes();
-        final int lifetimeInMinutes = update.getExtraDowntimeInMinutes();
-        return Duration.of(downtimeInMinutes + lifetimeInMinutes, MINUTES);
     }
 
     private static Instant findDowntime(final ServerUpdate update) {
@@ -53,7 +36,6 @@ public final class ServerUpdateService {
         return start.plus(downtimeDuration);
     }
 
-    //TODO: refactor
     private static Duration findDowntimeDuration(final ServerUpdate update) {
         final int downtimeInMinutes = update.getDowntimeInMinutes();
         return Duration.of(downtimeInMinutes, MINUTES);
