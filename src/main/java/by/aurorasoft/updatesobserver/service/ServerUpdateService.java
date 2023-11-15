@@ -5,12 +5,9 @@ import by.aurorasoft.updatesobserver.storage.ServerUpdateStorage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
-
-import static java.time.temporal.ChronoUnit.MINUTES;
 
 @Service
 @RequiredArgsConstructor
@@ -23,21 +20,10 @@ public final class ServerUpdateService {
 
     public Optional<Instant> findUpdateDowntime(final String serverName) {
         final Optional<ServerUpdate> optionalUpdate = this.updateStorage.findByServerName(serverName);
-        return optionalUpdate.map(ServerUpdateService::findDowntime);
+        return optionalUpdate.map(ServerUpdate::getDowntime);
     }
 
     public Collection<ServerUpdate> findAll() {
         return this.updateStorage.findAll();
-    }
-
-    private static Instant findDowntime(final ServerUpdate update) {
-        final Instant start = update.getStart();
-        final Duration downtimeDuration = findDowntimeDuration(update);
-        return start.plus(downtimeDuration);
-    }
-
-    private static Duration findDowntimeDuration(final ServerUpdate update) {
-        final int downtimeInMinutes = update.getDowntimeInMinutes();
-        return Duration.of(downtimeInMinutes, MINUTES);
     }
 }

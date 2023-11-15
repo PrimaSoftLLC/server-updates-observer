@@ -3,24 +3,25 @@ package by.aurorasoft.updatesobserver.storage;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import net.jodah.expiringmap.ExpiringMap;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.time.Instant.now;
 import static java.util.Optional.ofNullable;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static net.jodah.expiringmap.ExpirationPolicy.CREATED;
 
 public final class ServerUpdateStorage {
     private final ExpiringMap<String, ServerUpdate> updatesByServerNames;
 
-    public ServerUpdateStorage(final int maxSize, final Collection<ServerUpdate> updates) {
+    public ServerUpdateStorage(final int maxSize, final Collection<ServerUpdate> reloadedUpdates) {
         this.updatesByServerNames = createEmptyExpiringMap(maxSize);
-        putAll(this.updatesByServerNames, updates);
+        this.reloadAllAlive(reloadedUpdates);
     }
 
     public void save(final ServerUpdate update) {
         final String serverName = update.getServerName();
-        this.updatesByServerNames.put(serverName, update);
+        final long lifetimeInMillis = update.findLifetimeInMillis();
+        this.updatesByServerNames.put(serverName, update, lifetimeInMillis, MILLISECONDS);
     }
 
     public Optional<ServerUpdate> findByServerName(final String serverName) {
@@ -35,21 +36,20 @@ public final class ServerUpdateStorage {
     private static ExpiringMap<String, ServerUpdate> createEmptyExpiringMap(final int maxSize) {
         return ExpiringMap.builder()
                 .maxSize(maxSize)
+                .expirationPolicy(CREATED)
+                .variableExpiration()
                 .build();
     }
 
-    private static void putAll(final ExpiringMap<String, ServerUpdate> updatesByServerNames,
-                               final Collection<ServerUpdate> updates) {
-        updatesByServerNames.put()
+    private void reloadAllAlive(final Collection<ServerUpdate> updates) {
+        updates.stream()
+                .filter(ServerUpdate::isAlive)
+                .forEach(this::reload);
     }
 
-    private static boolean isNotExpired(final ServerUpdate update) {
-        final Instant start = update.getStart();
-        final Instant now = now();
-
-    }
-
-    private static void put(final ExpiringMap<String, ServerUpdate> updatesByServerNames, final ServerUpdate update) {
-
+    private void reload(final ServerUpdate update) {
+        final String serverName = update.getServerName();
+        final long remainingLifetimeInMillis = update.findRemainingLifetimeInMillis();
+        this.updatesByServerNames.put(serverName, update, remainingLifetimeInMillis, MILLISECONDS);
     }
 }
