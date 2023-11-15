@@ -1,1 +1,1 @@
-[{"serverName":"server","downtime":"2023-11-15T14:31:07.298444100Z","lifetime":"2023-11-15T14:32:07.298444100Z","alive":true}]
+[]
