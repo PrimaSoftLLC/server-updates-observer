@@ -1,6 +1,7 @@
-package by.aurorasoft.updatesobserver.service;
+package by.aurorasoft.updatesobserver.service.savingupdate;
 
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
+import by.aurorasoft.updatesobserver.service.ServerUpdateService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
