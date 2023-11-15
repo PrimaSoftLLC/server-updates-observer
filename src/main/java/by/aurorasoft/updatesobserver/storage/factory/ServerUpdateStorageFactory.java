@@ -5,7 +5,7 @@ import by.aurorasoft.updatesobserver.storage.ServerUpdateStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Collection;
 
 @Component
 public final class ServerUpdateStorageFactory {
@@ -19,7 +19,7 @@ public final class ServerUpdateStorageFactory {
     }
 
     public ServerUpdateStorage create() {
-        final List<ServerUpdate> updates = this.updateLoader.load();
+        final Collection<ServerUpdate> updates = this.updateLoader.load();
         return new ServerUpdateStorage(this.storageMaxSize, updates);
     }
 
