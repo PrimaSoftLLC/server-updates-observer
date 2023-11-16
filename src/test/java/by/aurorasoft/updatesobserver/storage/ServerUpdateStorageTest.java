@@ -108,7 +108,6 @@ public final class ServerUpdateStorageTest {
 
         final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
 
-        final long thirdGivenUpdateRemainingLifetimeInMillis = 300;
         final ServerUpdate thirdGivenUpdate = createAliveUpdate(
                 firstGivenUpdateServerName,
                 300
@@ -125,11 +124,12 @@ public final class ServerUpdateStorageTest {
         final long actualExpirationThirdGivenUpdate = actualUpdatesByServerNames.getExpiration(
                 firstGivenUpdateServerName
         );
-        assertEquals(thirdGivenUpdateRemainingLifetimeInMillis, actualExpirationThirdGivenUpdate);
+        //expiration wasn't changes because of updates are equal
+        assertEquals(firstGivenUpdateRemainingLifetimeInMillis, actualExpirationThirdGivenUpdate);
     }
 
     @Test
-    public void updateShouldNotBeSavedInFullStorage() {
+    public void updateShouldBeSavedInFullStorage() {
         final int givenStorageMaxSize = 1;
 
         final String firstGivenUpdateServerName = "first-server";
@@ -154,7 +154,6 @@ public final class ServerUpdateStorageTest {
 
         final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
         final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
-                firstGivenUpdateServerName, firstGivenUpdate,
                 secondGivenUpdateServerName, secondGivenUpdate
         );
         assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
@@ -317,6 +316,7 @@ public final class ServerUpdateStorageTest {
         return update;
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static ServerUpdate createNotAliveUpdate(final String serverName) {
         return createUpdate(serverName, false);
     }
