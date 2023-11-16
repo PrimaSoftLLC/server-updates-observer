@@ -4,3 +4,7 @@ server-updates:
     file-name: server-updates.txt
   storage:
     max-size: 20
+
+server:
+  servlet:
+    context-path: /updatesObserver
