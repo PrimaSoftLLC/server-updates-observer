@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.io.File;
 
 import static by.aurorasoft.updatesobserver.util.FileUtil.isEmpty;
-import static java.io.File.pathSeparator;
+import static java.io.File.separator;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -36,7 +36,7 @@ public final class FileUtilTest {
         final FilePath givenFilePath = createFilePath(givenDirectoryPath, givenFileName);
 
         final File actual = FileUtil.createFile(givenFilePath);
-        final File expected = new File(givenDirectoryPath + pathSeparator + givenFileName);
+        final File expected = new File(givenDirectoryPath + separator + givenFileName);
         assertEquals(expected, actual);
     }
 

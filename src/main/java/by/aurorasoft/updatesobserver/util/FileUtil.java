@@ -5,7 +5,7 @@ import lombok.experimental.UtilityClass;
 
 import java.io.File;
 
-import static java.io.File.pathSeparator;
+import static java.io.File.separator;
 
 @UtilityClass
 public final class FileUtil {
@@ -17,7 +17,7 @@ public final class FileUtil {
     public static File createFile(final FilePath path) {
         final String directoryPath = path.getDirectoryPath();
         final String fileName = path.getFileName();
-        final String filePath = directoryPath + pathSeparator + fileName;
+        final String filePath = directoryPath + separator + fileName;
         return new File(filePath);
     }
 
