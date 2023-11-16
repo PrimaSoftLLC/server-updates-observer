@@ -11,7 +11,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
 import static by.aurorasoft.updatesobserver.util.FileUtil.isEmpty;
+import static java.io.File.pathSeparator;
 import static java.util.Collections.emptyList;
 
 @Component
@@ -23,9 +25,10 @@ public final class ServerUpdateLoader {
     private final File updateFile;
 
     public ServerUpdateLoader(final ObjectMapper objectMapper,
-                              @Value("${server-updates.file-path}") final String updateFilePath) {
+                              @Value("${server-updates.file.dir}") final String updateFileDirectoryPath,
+                              @Value("${server-updates.file.name}") final String updateFileName) {
         this.objectMapper = objectMapper;
-        this.updateFile = new File(updateFilePath);
+        this.updateFile = createFile(updateFileDirectoryPath, updateFileName);
     }
 
     public Collection<ServerUpdate> load() {

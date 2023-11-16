@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
+
 @Service
 public final class SavingServerUpdateService {
     private final ServerUpdateService updateService;
@@ -19,10 +21,11 @@ public final class SavingServerUpdateService {
 
     public SavingServerUpdateService(final ServerUpdateService updateService,
                                      final ObjectMapper objectMapper,
-                                     @Value("${server-updates.file-path}") final String updateFilePath) {
+                                     @Value("${server-updates.file.dir}") final String updateFileDirectoryPath,
+                                     @Value("${server-updates.file.name}") final String updateFileName) {
         this.updateService = updateService;
         this.objectMapper = objectMapper;
-        this.updateFile = new File(updateFilePath);
+        this.updateFile = createFile(updateFileDirectoryPath, updateFileName);
     }
 
     @EventListener(ContextClosedEvent.class)
