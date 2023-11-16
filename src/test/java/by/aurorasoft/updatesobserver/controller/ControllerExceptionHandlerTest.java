@@ -1,5 +1,6 @@
 package by.aurorasoft.updatesobserver.controller;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDateTime;
 
 import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
+import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 public final class ControllerExceptionHandlerTest {
     private static final String FIELD_NAME_ERROR_RESPONSE_HTTP_STATUS = "httpStatus";
@@ -25,6 +28,30 @@ public final class ControllerExceptionHandlerTest {
 
         final ResponseEntity<?> actual = this.exceptionHandler.handleException(givenException);
         final HttpStatus expectedHttpStatus = INTERNAL_SERVER_ERROR;
+        assertSame(expectedHttpStatus, actual.getStatusCode());
+
+        final Object actualErrorResponse = actual.getBody();
+
+        final HttpStatus actualErrorResponseHttpStatus = findErrorResponseHttpStatus(actualErrorResponse);
+        assertSame(expectedHttpStatus, actualErrorResponseHttpStatus);
+
+        final String actualErrorResponseMessage = findErrorResponseMessage(actualErrorResponse);
+        assertSame(givenDescription, actualErrorResponseMessage);
+
+        final LocalDateTime actualErrorResponseDateTime = findErrorResponseDateTime(actualErrorResponse);
+        assertNotNull(actualErrorResponseDateTime);
+    }
+
+    @Test
+    public void constraintViolationExceptionShouldBeHandled() {
+        final String givenDescription = "exception-description";
+        final ConstraintViolationException givenException = new ConstraintViolationException(
+                givenDescription,
+                emptySet()
+        );
+
+        final ResponseEntity<?> actual = this.exceptionHandler.handleException(givenException);
+        final HttpStatus expectedHttpStatus = NOT_ACCEPTABLE;
         assertSame(expectedHttpStatus, actual.getStatusCode());
 
         final Object actualErrorResponse = actual.getBody();
