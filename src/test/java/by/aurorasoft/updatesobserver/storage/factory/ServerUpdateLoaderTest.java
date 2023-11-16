@@ -2,8 +2,12 @@
 //
 //import by.aurorasoft.updatesobserver.model.ServerUpdate;
 //import by.aurorasoft.updatesobserver.util.DeserializationUtil;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 //import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.mockito.Mock;
 //import org.mockito.MockedStatic;
+//import org.mockito.junit.MockitoJUnitRunner;
 //
 //import java.util.List;
 //
@@ -12,8 +16,14 @@
 //import static org.mockito.Mockito.mockStatic;
 //import static org.mockito.Mockito.same;
 //
+//@RunWith(MockitoJUnitRunner.class)
 //public final class ServerUpdateLoaderTest {
 //    private static final String GIVEN_FILE_PATH = "file-path";
+//
+//    @Mock
+//    private ObjectMapper mockedObjectMapper;
+//
+//
 //
 //    private final ServerUpdateLoader loader = new ServerUpdateLoader(GIVEN_FILE_PATH);
 //

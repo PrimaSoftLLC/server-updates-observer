@@ -7,220 +7,300 @@ import org.junit.Test;
 import java.util.*;
 
 import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
-import static java.time.Instant.parse;
 import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static net.jodah.expiringmap.ExpirationPolicy.CREATED;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public final class ServerUpdateStorageTest {
     private static final String FIELD_NAME_UPDATES_BY_SERVER_NAMES = "updatesByServerNames";
 
+    @Test
+    public void storageShouldBeCreated() {
+        final int givenStorageMaxSize = 20;
 
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 100;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
 
-//    @Test
-//    public void storageShouldBeCreated() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "third-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
-//
-//        final ServerUpdateStorage actual = new ServerUpdateStorage(givenUpdates);
-//
-//        final Map<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(actual);
-//        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
-//                firstGivenUpdate.getServerName(), firstGivenUpdate,
-//                secondGivenUpdate.getServerName(), secondGivenUpdate,
-//                thirdGivenUpdate.getServerName(), thirdGivenUpdate
-//        );
-//        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
-//    }
-//
-//    @Test(expected = IllegalStateException.class)
-//    public void storageShouldNotBeCreatedBecauseOfDuplicatedServerName() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
-//
-//        new ServerUpdateStorage(givenUpdates);
-//    }
-//
-//    @Test
-//    public void updateShouldBeSaved() {
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(emptyList());
-//        final ServerUpdate givenUpdate = new ServerUpdate(
-//                "server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                5,
-//                10
-//        );
-//
-//        givenStorage.save(givenUpdate);
-//
-//        final Map<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
-//        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(givenUpdate.getServerName(), givenUpdate);
-//        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
-//    }
-//
-//    @Test
-//    public void updateWithExistingServerNameShouldBeSaved() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenUpdates);
-//
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        givenStorage.save(thirdGivenUpdate);
-//
-//        final Map<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
-//        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
-//                firstGivenUpdate.getServerName(), firstGivenUpdate,
-//                thirdGivenUpdate.getServerName(), thirdGivenUpdate
-//        );
-//        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
-//    }
-//
-//    @Test
-//    public void updateShouldBeFoundByServerName() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "third-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenUpdates);
-//
-//        final String givenServerName = "third-server";
-//
-//        final Optional<ServerUpdate> optionalActual = givenStorage.findByServerName(givenServerName);
-//        assertTrue(optionalActual.isPresent());
-//        final ServerUpdate actual = optionalActual.get();
-//        assertEquals(thirdGivenUpdate, actual);
-//    }
-//
-//    @Test
-//    public void updateShouldNotBeFoundByServerName() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "third-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenUpdates);
-//
-//        final String givenServerName = "fourth-server";
-//
-//        final Optional<ServerUpdate> optionalActual = givenStorage.findByServerName(givenServerName);
-//        assertTrue(optionalActual.isEmpty());
-//    }
-//
-//    @Test
-//    public void allUpdatesShouldBeFound() {
-//        final ServerUpdate firstGivenUpdate = new ServerUpdate(
-//                "first-server",
-//                parse("2023-11-13T10:15:30.00Z"),
-//                5,
-//                10
-//        );
-//        final ServerUpdate secondGivenUpdate = new ServerUpdate(
-//                "second-server",
-//                parse("2023-11-13T11:15:30.00Z"),
-//                6,
-//                11
-//        );
-//        final ServerUpdate thirdGivenUpdate = new ServerUpdate(
-//                "third-server",
-//                parse("2023-11-13T12:15:30.00Z"),
-//                7,
-//                12
-//        );
-//        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenUpdates);
-//
-//        final Collection<ServerUpdate> actual = givenStorage.findAll();
-//        final Set<ServerUpdate> actualAsSet = new HashSet<>(actual);
-//        final Set<ServerUpdate> expectedAsSet = new HashSet<>(givenUpdates);
-//        assertEquals(expectedAsSet, actualAsSet);
-//    }
-//
-//    @Test
-//    public void allUpdatesShouldNotBeFound() {
-//        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(emptyList());
-//
-//        final Collection<ServerUpdate> actual = givenStorage.findAll();
-//        assertTrue(actual.isEmpty());
-//    }
+        final ServerUpdate secondGivenUpdate = createNotAliveUpdate("second-server");
+
+        final String thirdGivenUpdateServerName = "third-server";
+        final long thirdGivenUpdateRemainingLifetimeInMillis = 200;
+        final ServerUpdate thirdGivenUpdate = createAliveUpdate(
+                thirdGivenUpdateServerName,
+                thirdGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final Collection<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate, thirdGivenUpdate);
+
+        final ServerUpdateStorage actual = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(actual);
+        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
+                firstGivenUpdateServerName, firstGivenUpdate,
+                thirdGivenUpdateServerName, thirdGivenUpdate
+        );
+        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
+
+        final long actualExpirationFirstGivenUpdate = actualUpdatesByServerNames.getExpiration(
+                firstGivenUpdateServerName
+        );
+        assertEquals(firstGivenUpdateRemainingLifetimeInMillis, actualExpirationFirstGivenUpdate);
+
+        final long actualExpirationThirdGivenUpdate = actualUpdatesByServerNames.getExpiration(
+                thirdGivenUpdateServerName
+        );
+        assertEquals(thirdGivenUpdateRemainingLifetimeInMillis, actualExpirationThirdGivenUpdate);
+
+        final int actualStorageMaxSize = actualUpdatesByServerNames.getMaxSize();
+        assertEquals(givenStorageMaxSize, actualStorageMaxSize);
+
+        final boolean allEntriesHaveCreatedExpirationPolicy = allEntriesHaveCreatedExpirationPolicy(
+                actualUpdatesByServerNames
+        );
+        assertTrue(allEntriesHaveCreatedExpirationPolicy);
+    }
+
+    @Test
+    public void updateShouldBeSaved() {
+        final int givenStorageMaxSize = 3;
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, emptyList());
+
+        final String givenUpdateServerName = "server";
+        final long givenUpdateRemainingLifetimeInMillis = 100;
+        final ServerUpdate givenUpdate = createAliveUpdate(givenUpdateServerName, givenUpdateRemainingLifetimeInMillis);
+
+        givenStorage.save(givenUpdate);
+
+        final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
+        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(givenUpdate.getServerName(), givenUpdate);
+        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
+
+        final long actualExpirationGivenUpdate = actualUpdatesByServerNames.getExpiration(givenUpdateServerName);
+        assertEquals(givenUpdateRemainingLifetimeInMillis, actualExpirationGivenUpdate);
+    }
+
+    @Test
+    public void updateWithExistingServerNameShouldBeSaved() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 100;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 200;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final long thirdGivenUpdateRemainingLifetimeInMillis = 300;
+        final ServerUpdate thirdGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                300
+        );
+        givenStorage.save(thirdGivenUpdate);
+
+        final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
+        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
+                firstGivenUpdateServerName, thirdGivenUpdate,
+                secondGivenUpdateServerName, secondGivenUpdate
+        );
+        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
+
+        final long actualExpirationThirdGivenUpdate = actualUpdatesByServerNames.getExpiration(
+                firstGivenUpdateServerName
+        );
+        assertEquals(thirdGivenUpdateRemainingLifetimeInMillis, actualExpirationThirdGivenUpdate);
+    }
+
+    @Test
+    public void updateShouldNotBeSavedInFullStorage() {
+        final int givenStorageMaxSize = 1;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 200;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        givenStorage.save(secondGivenUpdate);
+
+        final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
+        final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
+                firstGivenUpdateServerName, firstGivenUpdate,
+                secondGivenUpdateServerName, secondGivenUpdate
+        );
+        assertEquals(expectedUpdatesByServerNames, actualUpdatesByServerNames);
+    }
+
+    @Test
+    public void updateShouldBeFoundByServerName() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 600;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final Optional<ServerUpdate> optionalActual = givenStorage.findByServerName(secondGivenUpdateServerName);
+        assertTrue(optionalActual.isPresent());
+        final ServerUpdate actual = optionalActual.get();
+        assertSame(secondGivenUpdate, actual);
+    }
+
+    @Test
+    public void updateShouldNotBeFoundByServerName() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 600;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final String givenServerNameToFindUpdate = "third-server";
+
+        final Optional<ServerUpdate> optionalActual = givenStorage.findByServerName(givenServerNameToFindUpdate);
+        assertTrue(optionalActual.isEmpty());
+    }
+
+    @Test
+    public void updateShouldNotBeFoundByServerNameBecauseOfExpiration()
+            throws InterruptedException {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        MILLISECONDS.sleep(secondGivenUpdateRemainingLifetimeInMillis * 2);
+
+        final Optional<ServerUpdate> optionalActual = givenStorage.findByServerName(secondGivenUpdateServerName);
+        assertTrue(optionalActual.isEmpty());
+    }
+
+    @Test
+    public void allUpdatesShouldBeFound() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final Collection<ServerUpdate> actual = givenStorage.findAll();
+        final Set<ServerUpdate> actualAsSet = new HashSet<>(actual);
+        final Set<ServerUpdate> expectedAsSet = new HashSet<>(givenUpdates);
+        assertEquals(expectedAsSet, actualAsSet);
+    }
+
+    @Test
+    public void allUpdatesShouldNotBeFoundBecauseOfExpiration()
+            throws Exception {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        MILLISECONDS.sleep(firstGivenUpdateRemainingLifetimeInMillis * 2);
+
+        final Collection<ServerUpdate> actual = givenStorage.findAll();
+        assertTrue(actual.isEmpty());
+    }
 
     @SuppressWarnings("unchecked")
     private static ExpiringMap<String, ServerUpdate> findUpdatesByServerNames(final ServerUpdateStorage storage) {
@@ -229,5 +309,29 @@ public final class ServerUpdateStorageTest {
                 FIELD_NAME_UPDATES_BY_SERVER_NAMES,
                 ExpiringMap.class
         );
+    }
+
+    private static ServerUpdate createAliveUpdate(final String serverName, final long remainingLifetimeInMillis) {
+        final ServerUpdate update = createUpdate(serverName, true);
+        when(update.findRemainingLifetimeInMillis()).thenReturn(remainingLifetimeInMillis);
+        return update;
+    }
+
+    private static ServerUpdate createNotAliveUpdate(final String serverName) {
+        return createUpdate(serverName, false);
+    }
+
+    private static ServerUpdate createUpdate(final String serverName, final boolean alive) {
+        final ServerUpdate update = mock(ServerUpdate.class);
+        when(update.getServerName()).thenReturn(serverName);
+        when(update.isAlive()).thenReturn(alive);
+        return update;
+    }
+
+    private static boolean allEntriesHaveCreatedExpirationPolicy(final ExpiringMap<String, ServerUpdate> map) {
+        return map.keySet()
+                .stream()
+                .map(map::getExpirationPolicy)
+                .allMatch(policy -> policy == CREATED);
     }
 }
