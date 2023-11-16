@@ -4,12 +4,13 @@ import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.service.ServerUpdateService;
 import by.aurorasoft.updatesobserver.service.factory.ServerUpdateFactory;
 import by.aurorasoft.updatesobserver.util.ResponseEntityUtil;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -20,6 +21,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @RestController
 @RequestMapping("/serverUpdate")
 @RequiredArgsConstructor
+@Validated
 public class ServerUpdateController {
     private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(1, DAYS);
 
