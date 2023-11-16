@@ -1,6 +1,7 @@
 package by.aurorasoft.updatesobserver.controller;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,9 +12,19 @@ import java.time.LocalDateTime;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 @ControllerAdvice
 public final class ControllerExceptionHandler {
+
+    @ExceptionHandler
+    public ResponseEntity<RestErrorResponse> handleException(final ConstraintViolationException exception) {
+        return createResponseEntity(
+                exception,
+                Exception::getMessage,
+                NOT_ACCEPTABLE
+        );
+    }
 
     @ExceptionHandler
     public ResponseEntity<RestErrorResponse> handleException(final Exception exception) {
@@ -24,7 +35,6 @@ public final class ControllerExceptionHandler {
         );
     }
 
-    @SuppressWarnings("SameParameterValue")
     private static <E extends Exception> ResponseEntity<RestErrorResponse> createResponseEntity(
             final E exception,
             final ExceptionMessageExtractor<E> messageExtractor,

@@ -116,12 +116,12 @@ public class ServerUpdateControllerTest {
         final int givenDowntimeInMinutes = 10;
         final int givenExtraLifetimeInMinutes = 15;
 
-        final String actual = this.doRequestToCreateAndSaveUpdateExpectingInternalServerErrorStatus(
+        final String actual = this.doRequestToCreateAndSaveUpdateExpectingNotAcceptableStatus(
                 givenServerName,
                 givenDowntimeInMinutes,
                 givenExtraLifetimeInMinutes
         );
-        final String expectedRegex = "\\{\"httpStatus\":\"INTERNAL_SERVER_ERROR\","
+        final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
                 + "\"message\":\"createAndSave\\.serverName: must not be blank\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
@@ -136,12 +136,12 @@ public class ServerUpdateControllerTest {
         final int givenDowntimeInMinutes = 0;
         final int givenExtraLifetimeInMinutes = 15;
 
-        final String actual = this.doRequestToCreateAndSaveUpdateExpectingInternalServerErrorStatus(
+        final String actual = this.doRequestToCreateAndSaveUpdateExpectingNotAcceptableStatus(
                 givenServerName,
                 givenDowntimeInMinutes,
                 givenExtraLifetimeInMinutes
         );
-        final String expectedRegex = "\\{\"httpStatus\":\"INTERNAL_SERVER_ERROR\","
+        final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
                 + "\"message\":\"createAndSave\\.downtimeInMinutes: must be greater than or equal to 1\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
@@ -156,12 +156,12 @@ public class ServerUpdateControllerTest {
         final int givenDowntimeInMinutes = 10;
         final int givenExtraLifetimeInMinutes = 0;
 
-        final String actual = this.doRequestToCreateAndSaveUpdateExpectingInternalServerErrorStatus(
+        final String actual = this.doRequestToCreateAndSaveUpdateExpectingNotAcceptableStatus(
                 givenServerName,
                 givenDowntimeInMinutes,
                 givenExtraLifetimeInMinutes
         );
-        final String expectedRegex = "\\{\"httpStatus\":\"INTERNAL_SERVER_ERROR\","
+        final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
                 + "\"message\":\"createAndSave\\.extraLifetimeInMinutes: must be greater than or equal to 1\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
@@ -197,8 +197,8 @@ public class ServerUpdateControllerTest {
     public void updateDowntimeShouldNotBeFoundBecauseOfBlankServerName() {
         final String givenServerName = "   ";
 
-        final String actual = this.doRequestToFindUpdateDowntimeExpectingInternalServerErrorStatus(givenServerName);
-        final String expectedRegex = "\\{\"httpStatus\":\"INTERNAL_SERVER_ERROR\","
+        final String actual = this.doRequestToFindUpdateDowntimeExpectingNotAcceptableStatus(givenServerName);
+        final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
                 + "\"message\":\"findUpdateDowntime\\.serverName: must not be blank\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
@@ -231,14 +231,14 @@ public class ServerUpdateControllerTest {
         );
     }
 
-    private String doRequestToCreateAndSaveUpdateExpectingInternalServerErrorStatus(final String serverName,
-                                                                                    final long downtimeInMinutes,
-                                                                                    final long extraLifetimeInMinutes) {
+    private String doRequestToCreateAndSaveUpdateExpectingNotAcceptableStatus(final String serverName,
+                                                                              final long downtimeInMinutes,
+                                                                              final long extraLifetimeInMinutes) {
         return this.doRequestToCreateAndSaveUpdate(
                 serverName,
                 downtimeInMinutes,
                 extraLifetimeInMinutes,
-                StatusResultMatchers::isInternalServerError
+                StatusResultMatchers::isNotAcceptable
         );
     }
 
@@ -282,8 +282,8 @@ public class ServerUpdateControllerTest {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private String doRequestToFindUpdateDowntimeExpectingInternalServerErrorStatus(final String serverName) {
-        return this.doRequestToFindUpdateDowntime(serverName, StatusResultMatchers::isInternalServerError);
+    private String doRequestToFindUpdateDowntimeExpectingNotAcceptableStatus(final String serverName) {
+        return this.doRequestToFindUpdateDowntime(serverName, StatusResultMatchers::isNotAcceptable);
     }
 
     private String doRequestToFindUpdateDowntime(final String serverName,
