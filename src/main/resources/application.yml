@@ -1,0 +1,6 @@
+server-updates:
+  file:
+    directory-path: ./src/main/resources
+    file-name: server-updates.txt
+  storage:
+    max-size: 20

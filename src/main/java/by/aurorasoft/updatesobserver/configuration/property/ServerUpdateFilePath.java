@@ -1,6 +1,6 @@
 package by.aurorasoft.updatesobserver.configuration.property;
 
-import lombok.*;
+import by.aurorasoft.updatesobserver.util.FileUtil.FilePath;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +8,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties(prefix = "server-updates.file")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-@EqualsAndHashCode
-@ToString
-@Builder
-public class ServerUpdateFilePath {
-    private String directoryPath;
-    private String fileName;
+public class ServerUpdateFilePath extends FilePath {
+
 }

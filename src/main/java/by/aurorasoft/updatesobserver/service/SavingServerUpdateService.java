@@ -1,8 +1,8 @@
 package by.aurorasoft.updatesobserver.service;
 
+import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
 
+
 @Service
 public final class SavingServerUpdateService {
     private final ServerUpdateService updateService;
@@ -21,11 +22,10 @@ public final class SavingServerUpdateService {
 
     public SavingServerUpdateService(final ServerUpdateService updateService,
                                      final ObjectMapper objectMapper,
-                                     @Value("${server-updates.file.dir}") final String updateFileDirectoryPath,
-                                     @Value("${server-updates.file.name}") final String updateFileName) {
+                                     final ServerUpdateFilePath filePath) {
         this.updateService = updateService;
         this.objectMapper = objectMapper;
-        this.updateFile = createFile(updateFileDirectoryPath, updateFileName);
+        this.updateFile = createFile(filePath);
     }
 
     @EventListener(ContextClosedEvent.class)

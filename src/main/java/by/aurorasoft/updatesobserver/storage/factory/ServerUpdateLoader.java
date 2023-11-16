@@ -1,9 +1,9 @@
 package by.aurorasoft.updatesobserver.storage.factory;
 
+import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -13,7 +13,6 @@ import java.util.List;
 
 import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
 import static by.aurorasoft.updatesobserver.util.FileUtil.isEmpty;
-import static java.io.File.pathSeparator;
 import static java.util.Collections.emptyList;
 
 @Component
@@ -24,11 +23,9 @@ public final class ServerUpdateLoader {
     private final ObjectMapper objectMapper;
     private final File updateFile;
 
-    public ServerUpdateLoader(final ObjectMapper objectMapper,
-                              @Value("${server-updates.file.dir}") final String updateFileDirectoryPath,
-                              @Value("${server-updates.file.name}") final String updateFileName) {
+    public ServerUpdateLoader(final ObjectMapper objectMapper, final ServerUpdateFilePath serverUpdateFilePath) {
         this.objectMapper = objectMapper;
-        this.updateFile = createFile(updateFileDirectoryPath, updateFileName);
+        this.updateFile = createFile(serverUpdateFilePath);
     }
 
     public Collection<ServerUpdate> load() {

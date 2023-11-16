@@ -1,12 +1,12 @@
 package by.aurorasoft.updatesobserver.service;
 
 import by.aurorasoft.updatesobserver.base.AbstractContextTest;
+import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.service.SavingServerUpdateService.ServerUpdateSavingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,11 +28,8 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
     @MockBean
     private ObjectMapper mockedObjectMapper;
 
-    @Value("${server-updates.file.dir}")
-    private String expectedUpdateFileDirectoryPath;
-
-    @Value("${server-updates.file.name}")
-    private String expectedUpdateFileName;
+    @Autowired
+    private ServerUpdateFilePath serverUpdateFilePath;
 
     @Autowired
     private ApplicationContext context;
@@ -82,6 +79,6 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
     }
 
     private File createExpectedUpdateFile() {
-        return createFile(this.expectedUpdateFileDirectoryPath, this.expectedUpdateFileName);
+        return createFile(this.serverUpdateFilePath);
     }
 }
