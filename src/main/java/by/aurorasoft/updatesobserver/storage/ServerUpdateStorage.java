@@ -25,7 +25,8 @@ public final class ServerUpdateStorage {
                         remainingLifetimeInMillis -> this.updatesByServerNames.put(
                                 serverName,
                                 update,
-                                remainingLifetimeInMillis, MILLISECONDS
+                                remainingLifetimeInMillis,
+                                MILLISECONDS
                         )
                 );
     }
