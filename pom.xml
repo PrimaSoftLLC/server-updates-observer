@@ -24,6 +24,7 @@
         <expiringmap.version>0.5.10</expiringmap.version>
         <openapi.version>2.2.0</openapi.version>
         <lombok.version>1.18.26</lombok.version>
+        <imageLabel>DEV</imageLabel>
     </properties>
 
     <dependencies>
@@ -110,12 +111,44 @@
     </dependencies>
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <imageName>cooll3r/updatesObserver:${project.version}-${imageLabel}</imageName>
+                    <baseImage>adoptopenjdk/openjdk11-openj9:alpine-slim</baseImage>
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <!-- copy the service's jar file from target into the root directory of the image -->
+                    <resources>
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>
+                            <include>${project.build.finalName}.jar</include>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
+
         </plugins>
+
+
     </build>
     <repositories>
         <repository>
