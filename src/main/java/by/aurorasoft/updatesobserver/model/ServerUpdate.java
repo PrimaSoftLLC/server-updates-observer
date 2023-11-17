@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.OptionalLong;
 
@@ -21,8 +22,13 @@ public class ServerUpdate implements Serializable {
     Instant lifetime;
 
     public OptionalLong findRemainingLifetimeInMillisIfAlive() {
-        final Instant now = now();
-        final long remainingLifetimeInMillis = between(now, this.lifetime).toMillis();
+        final long remainingLifetimeInMillis = this.findRemainingLifetimeInMillis();
         return remainingLifetimeInMillis > 0 ? OptionalLong.of(remainingLifetimeInMillis) : empty();
+    }
+
+    private long findRemainingLifetimeInMillis() {
+        final Instant now = now();
+        final Duration lifetimeDuration = between(now, this.lifetime);
+        return lifetimeDuration.toMillis();
     }
 }
