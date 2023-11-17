@@ -18,10 +18,16 @@ public final class ServerUpdateStorage {
         this.reloadAllAlive(reloadedUpdates);
     }
 
-    public void save(final ServerUpdate update) {
+    public void saveIfAlive(final ServerUpdate update) {
         final String serverName = update.getServerName();
-        final long remainingLifetimeInMillis = update.findRemainingLifetimeInMillis();
-        this.updatesByServerNames.put(serverName, update, remainingLifetimeInMillis, MILLISECONDS);
+        update.findRemainingLifetimeInMillisIfAlive()
+                .ifPresent(
+                        remainingLifetimeInMillis -> this.updatesByServerNames.put(
+                                serverName,
+                                update,
+                                remainingLifetimeInMillis, MILLISECONDS
+                        )
+                );
     }
 
     public Optional<ServerUpdate> findByServerName(final String serverName) {
@@ -42,8 +48,6 @@ public final class ServerUpdateStorage {
     }
 
     private void reloadAllAlive(final Collection<ServerUpdate> updates) {
-        updates.stream()
-                .filter(ServerUpdate::isAlive)
-                .forEach(this::save);
+        updates.forEach(this::saveIfAlive);
     }
 }

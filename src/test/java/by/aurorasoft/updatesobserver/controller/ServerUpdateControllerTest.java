@@ -79,7 +79,7 @@ public class ServerUpdateControllerTest {
         final String expected = "";
         assertEquals(expected, actual);
 
-        verify(this.mockedUpdateService, times(1)).save(same(givenUpdate));
+        verify(this.mockedUpdateService, times(1)).saveIfAlive(same(givenUpdate));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class ServerUpdateControllerTest {
         final String expected = "";
         assertEquals(expected, actual);
 
-        verify(this.mockedUpdateService, times(1)).save(same(givenUpdate));
+        verify(this.mockedUpdateService, times(1)).saveIfAlive(same(givenUpdate));
     }
 
     @Test

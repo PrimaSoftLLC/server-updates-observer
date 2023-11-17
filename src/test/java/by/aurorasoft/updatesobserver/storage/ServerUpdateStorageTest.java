@@ -76,7 +76,7 @@ public final class ServerUpdateStorageTest {
         final long givenUpdateRemainingLifetimeInMillis = 100;
         final ServerUpdate givenUpdate = createAliveUpdate(givenUpdateServerName, givenUpdateRemainingLifetimeInMillis);
 
-        givenStorage.save(givenUpdate);
+        givenStorage.saveIfAlive(givenUpdate);
 
         final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
         final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(givenUpdate.getServerName(), givenUpdate);
@@ -112,7 +112,7 @@ public final class ServerUpdateStorageTest {
                 firstGivenUpdateServerName,
                 300
         );
-        givenStorage.save(thirdGivenUpdate);
+        givenStorage.saveIfAlive(thirdGivenUpdate);
 
         final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
         final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
@@ -150,7 +150,7 @@ public final class ServerUpdateStorageTest {
                 secondGivenUpdateRemainingLifetimeInMillis
         );
 
-        givenStorage.save(secondGivenUpdate);
+        givenStorage.saveIfAlive(secondGivenUpdate);
 
         final ExpiringMap<String, ServerUpdate> actualUpdatesByServerNames = findUpdatesByServerNames(givenStorage);
         final Map<String, ServerUpdate> expectedUpdatesByServerNames = Map.of(
@@ -312,7 +312,7 @@ public final class ServerUpdateStorageTest {
 
     private static ServerUpdate createAliveUpdate(final String serverName, final long remainingLifetimeInMillis) {
         final ServerUpdate update = createUpdate(serverName, true);
-        when(update.findRemainingLifetimeInMillis()).thenReturn(remainingLifetimeInMillis);
+        when(update.findRemainingLifetimeInMillisIfAlive()).thenReturn(remainingLifetimeInMillis);
         return update;
     }
 

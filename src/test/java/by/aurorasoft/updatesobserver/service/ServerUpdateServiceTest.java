@@ -37,9 +37,9 @@ public final class ServerUpdateServiceTest {
     public void updateShouldBeSaved() {
         final ServerUpdate givenUpdate = ServerUpdate.builder().build();
 
-        this.updateService.save(givenUpdate);
+        this.updateService.saveIfAlive(givenUpdate);
 
-        verify(this.mockedUpdateStorage, times(1)).save(same(givenUpdate));
+        verify(this.mockedUpdateStorage, times(1)).saveIfAlive(same(givenUpdate));
     }
 
     @Test

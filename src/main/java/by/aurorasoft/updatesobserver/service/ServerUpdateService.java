@@ -14,8 +14,8 @@ import java.util.Optional;
 public final class ServerUpdateService {
     private final ServerUpdateStorage updateStorage;
 
-    public void save(final ServerUpdate update) {
-        this.updateStorage.save(update);
+    public void saveIfAlive(final ServerUpdate update) {
+        this.updateStorage.saveIfAlive(update);
     }
 
     public Optional<Instant> findUpdateDowntime(final String serverName) {

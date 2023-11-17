@@ -58,7 +58,7 @@ public final class ServerUpdateStorageFactoryTest {
         final ServerUpdate update = mock(ServerUpdate.class);
         when(update.getServerName()).thenReturn(serverName);
         when(update.isAlive()).thenReturn(true);
-        when(update.findRemainingLifetimeInMillis()).thenReturn(GIVEN_REMAINING_LIFETIME_IN_MILLIS);
+        when(update.findRemainingLifetimeInMillisIfAlive()).thenReturn(GIVEN_REMAINING_LIFETIME_IN_MILLIS);
         return update;
     }
 

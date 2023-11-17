@@ -33,7 +33,7 @@ public class ServerUpdateController {
                                            @RequestParam(name = "downtime") @Min(1) final long downtimeInMinutes,
                                            @RequestParam(name = "extraLifetime", defaultValue = "10") @Min(1) final long extraLifetimeInMinutes) {
         final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, extraLifetimeInMinutes);
-        this.updateService.save(update);
+        this.updateService.saveIfAlive(update);
         return noContent();
     }
 

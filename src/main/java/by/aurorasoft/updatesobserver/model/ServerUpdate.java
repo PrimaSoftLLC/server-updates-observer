@@ -6,9 +6,11 @@ import lombok.Value;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.OptionalLong;
 
 import static java.time.Duration.between;
 import static java.time.Instant.now;
+import static java.util.OptionalLong.empty;
 
 @Value
 @AllArgsConstructor
@@ -18,13 +20,9 @@ public class ServerUpdate implements Serializable {
     Instant downtime;
     Instant lifetime;
 
-    public boolean isAlive() {
+    public OptionalLong findRemainingLifetimeInMillisIfAlive() {
         final Instant now = now();
-        return !now.isAfter(this.lifetime);
-    }
-
-    public long findRemainingLifetimeInMillis() {
-        final Instant now = now();
-        return between(now, this.lifetime).toMillis();
+        final long remainingLifetimeInMillis = between(now, this.lifetime).toMillis();
+        return remainingLifetimeInMillis > 0 ? OptionalLong.of(remainingLifetimeInMillis) : empty();
     }
 }
