@@ -34,7 +34,7 @@ public final class ServerUpdateServiceTest {
     }
 
     @Test
-    public void updateShouldBeSaved() {
+    public void updateShouldBeSavedIfAlive() {
         final ServerUpdate givenUpdate = ServerUpdate.builder().build();
 
         this.updateService.saveIfAlive(givenUpdate);
