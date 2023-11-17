@@ -83,7 +83,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void updateShouldBeCreatedAndSavedWithDefaultExtraLifetime() {
+    public void updateShouldBeCreatedAndSavedIfAliveWithDefaultExtraLifetime() {
         final String givenServerName = "server";
         final long givenDowntimeInMinutes = 10;
 
@@ -111,7 +111,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void updateShouldNotBeCreatedAndSavedBecauseOfBlankServerName() {
+    public void updateShouldNotBeCreatedAndSavedIfAliveBecauseOfBlankServerName() {
         final String givenServerName = "     ";
         final int givenDowntimeInMinutes = 10;
         final int givenExtraLifetimeInMinutes = 15;
@@ -122,7 +122,7 @@ public class ServerUpdateControllerTest {
                 givenExtraLifetimeInMinutes
         );
         final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
-                + "\"message\":\"createAndSave\\.serverName: must not be blank\","
+                + "\"message\":\"createAndSaveIfAlive\\.serverName: must not be blank\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
 
@@ -131,7 +131,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void updateShouldNotBeCreatedAndSavedBecauseOfNotValidDowntimeInMinutes() {
+    public void updateShouldNotBeCreatedAndSavedIfAliveBecauseOfNotValidDowntimeInMinutes() {
         final String givenServerName = "server";
         final int givenDowntimeInMinutes = 0;
         final int givenExtraLifetimeInMinutes = 15;
@@ -142,7 +142,7 @@ public class ServerUpdateControllerTest {
                 givenExtraLifetimeInMinutes
         );
         final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
-                + "\"message\":\"createAndSave\\.downtimeInMinutes: must be greater than or equal to 1\","
+                + "\"message\":\"createAndSaveIfAlive\\.downtimeInMinutes: must be greater than or equal to 1\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
 
@@ -151,7 +151,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void updateShouldNotBeCreatedAndSavedBecauseOfNotValidExtraLifetimeInMinutes() {
+    public void updateShouldNotBeCreatedAndSavedIfAliveBecauseOfNotValidExtraLifetimeInMinutes() {
         final String givenServerName = "server";
         final int givenDowntimeInMinutes = 10;
         final int givenExtraLifetimeInMinutes = 0;
@@ -162,7 +162,7 @@ public class ServerUpdateControllerTest {
                 givenExtraLifetimeInMinutes
         );
         final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
-                + "\"message\":\"createAndSave\\.extraLifetimeInMinutes: must be greater than or equal to 1\","
+                + "\"message\":\"createAndSaveIfAlive\\.extraLifetimeInMinutes: must be greater than or equal to 1\","
                 + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
         assertTrue(actual.matches(expectedRegex));
 
