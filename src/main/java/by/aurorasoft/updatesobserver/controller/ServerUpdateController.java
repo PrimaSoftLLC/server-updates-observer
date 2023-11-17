@@ -29,9 +29,9 @@ public class ServerUpdateController {
     private final ServerUpdateService updateService;
 
     @PostMapping
-    public ResponseEntity<?> createAndSave(@RequestParam(name = "serverName") @NotBlank final String serverName,
-                                           @RequestParam(name = "downtime") @Min(1) final long downtimeInMinutes,
-                                           @RequestParam(name = "extraLifetime", defaultValue = "10") @Min(1) final long extraLifetimeInMinutes) {
+    public ResponseEntity<?> createAndSaveIfAlive(@RequestParam(name = "serverName") @NotBlank final String serverName,
+                                                  @RequestParam(name = "downtime") @Min(1) final long downtimeInMinutes,
+                                                  @RequestParam(name = "extraLifetime", defaultValue = "10") @Min(1) final long extraLifetimeInMinutes) {
         final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, extraLifetimeInMinutes);
         this.updateService.saveIfAlive(update);
         return noContent();
