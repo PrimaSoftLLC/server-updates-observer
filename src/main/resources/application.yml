@@ -8,3 +8,7 @@ server-updates:
 server:
   servlet:
     context-path: /updatesObserver
+
+spring:
+  application:
+    name: updates-observer
