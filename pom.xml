@@ -138,11 +138,10 @@
                         <resource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
+                            <include>server-updates-observer-1.0.0.jar</include>
                         </resource>
                         <resource>
                             <directory>${project.basedir}/docker-run-scripts</directory>
-                            <include>metr_md5.sh</include>
                             <include>run.sh</include>
                             <targetPath>/</targetPath>
                         </resource>

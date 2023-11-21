@@ -1,5 +1,3 @@
 #!/bin/sh
 
-
-sh metr_md5.sh
-java -jar locator*.jar
+java -jar server-updates-observer-1.0.0.jar
