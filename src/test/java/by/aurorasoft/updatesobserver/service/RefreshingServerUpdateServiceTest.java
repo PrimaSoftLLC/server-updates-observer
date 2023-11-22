@@ -3,14 +3,11 @@ package by.aurorasoft.updatesobserver.service;
 import by.aurorasoft.updatesobserver.base.AbstractContextTest;
 import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
-import by.aurorasoft.updatesobserver.service.SavingServerUpdateService.ServerUpdateSavingException;
+import by.aurorasoft.updatesobserver.service.ServerUpdateRefreshingService.ServerUpdateRefreshingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.ContextClosedEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +17,7 @@ import java.util.List;
 import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
 import static org.mockito.Mockito.*;
 
-public final class SavingServerUpdateServiceTest extends AbstractContextTest {
+public final class RefreshingServerUpdateServiceTest extends AbstractContextTest {
 
     @MockBean
     private ServerUpdateService mockedUpdateService;
@@ -32,13 +29,10 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
     private ServerUpdateFilePath serverUpdateFilePath;
 
     @Autowired
-    private ApplicationContext context;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private ServerUpdateRefreshingService refreshingService;
 
     @Test
-    public void updatesShouldBeSaved()
+    public void updatesShouldBeRefreshed()
             throws Exception {
         final Collection<ServerUpdate> givenUpdates = List.of(
                 createUpdate("first-server"),
@@ -46,8 +40,7 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
         );
         when(this.mockedUpdateService.findAll()).thenReturn(givenUpdates);
 
-        final ContextClosedEvent givenEvent = new ContextClosedEvent(this.context);
-        this.eventPublisher.publishEvent(givenEvent);
+        this.refreshingService.refresh();
 
         final File expectedUpdateFile = this.createExpectedUpdateFile();
         verify(this.mockedObjectMapper, times(1)).writeValue(
@@ -56,8 +49,8 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
         );
     }
 
-    @Test(expected = ServerUpdateSavingException.class)
-    public void updatesShouldNotBeSaved()
+    @Test(expected = ServerUpdateRefreshingException.class)
+    public void updatesShouldNotBeRefreshed()
             throws Exception {
         final Collection<ServerUpdate> givenUpdates = List.of(
                 createUpdate("first-server"),
@@ -68,8 +61,7 @@ public final class SavingServerUpdateServiceTest extends AbstractContextTest {
         final File expectedUpdateFile = this.createExpectedUpdateFile();
         doThrow(IOException.class).when(this.mockedObjectMapper).writeValue(eq(expectedUpdateFile), same(givenUpdates));
 
-        final ContextClosedEvent givenEvent = new ContextClosedEvent(this.context);
-        this.eventPublisher.publishEvent(givenEvent);
+        this.refreshingService.refresh();
     }
 
     private static ServerUpdate createUpdate(final String serverName) {

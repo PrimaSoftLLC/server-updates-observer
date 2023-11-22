@@ -3,7 +3,7 @@ services:
   app:
     image: cooll3r/updates-observer:17-DEV
     container_name: updates-observer
-#    stop_grace_period: 5m
+    stop_grace_period: 5m
     environment:
       UPDATES_FILE_DIRECTORY_PATH: ${SERVER_UPDATES_FILE_DIRECTORY_PATH}
     volumes:
