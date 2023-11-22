@@ -3,6 +3,7 @@ package by.aurorasoft.updatesobserver.service;
 import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,13 @@ import java.util.Collection;
 import static by.aurorasoft.updatesobserver.util.FileUtil.createFile;
 
 @Service
-public final class ServerUpdateRefreshingService {
+@Slf4j
+public final class RefreshingServerUpdateService {
     private final ServerUpdateService updateService;
     private final ObjectMapper objectMapper;
     private final File updateFile;
 
-    public ServerUpdateRefreshingService(final ServerUpdateService updateService,
+    public RefreshingServerUpdateService(final ServerUpdateService updateService,
                                          final ObjectMapper objectMapper,
                                          final ServerUpdateFilePath filePath) {
         this.updateService = updateService;
@@ -29,6 +31,7 @@ public final class ServerUpdateRefreshingService {
     @Scheduled(cron = "0 */1 * ? * *")
     public void refresh() {
         try {
+            log.info("updates refreshed");
             final Collection<ServerUpdate> updates = this.updateService.findAll();
             this.objectMapper.writeValue(this.updateFile, updates);
         } catch (final IOException cause) {

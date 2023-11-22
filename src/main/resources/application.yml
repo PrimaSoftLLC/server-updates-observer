@@ -1,6 +1,6 @@
 server-updates:
   file:
-    directory-path: C:\temp
+    directory-path: /updates
     file-name: server-updates.txt
   storage:
     max-size: 20

@@ -3,7 +3,7 @@ package by.aurorasoft.updatesobserver.service;
 import by.aurorasoft.updatesobserver.base.AbstractContextTest;
 import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
-import by.aurorasoft.updatesobserver.service.ServerUpdateRefreshingService.ServerUpdateRefreshingException;
+import by.aurorasoft.updatesobserver.service.RefreshingServerUpdateService.ServerUpdateRefreshingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public final class RefreshingServerUpdateServiceTest extends AbstractContextTest
     private ServerUpdateFilePath serverUpdateFilePath;
 
     @Autowired
-    private ServerUpdateRefreshingService refreshingService;
+    private RefreshingServerUpdateService refreshingService;
 
     @Test
     public void updatesShouldBeRefreshed()
