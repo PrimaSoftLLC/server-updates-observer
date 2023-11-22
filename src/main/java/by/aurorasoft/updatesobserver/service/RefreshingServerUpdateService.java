@@ -26,7 +26,7 @@ public final class RefreshingServerUpdateService {
         this.updateFile = createFile(filePath);
     }
 
-    @Scheduled(cron = "0 */1 * ? * *")
+    @Scheduled(cron = "0 */30 * ? * *")
     public void refresh() {
         try {
             final Collection<ServerUpdate> updates = this.updateService.findAll();
