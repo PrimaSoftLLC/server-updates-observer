@@ -1,6 +1,6 @@
 server-updates:
   file:
-    directory-path: ./src/main/resources
+    directory-path: /updates
     file-name: server-updates.txt
   storage:
     max-size: 20
@@ -8,3 +8,7 @@ server-updates:
 server:
   servlet:
     context-path: /updatesObserver
+
+spring:
+  application:
+    name: updates-observer

@@ -1,0 +1,12 @@
+version: '3'
+services:
+  app:
+    image: cooll3r/updates-observer:17-DEV
+    container_name: updates-observer
+    environment:
+      UPDATES_FILE_DIRECTORY_PATH: ${SERVER_UPDATES_FILE_DIRECTORY_PATH}
+    volumes:
+        - C:\temp:${SERVER_UPDATES_FILE_DIRECTORY_PATH}
+    restart: always
+    ports:
+      - "8080:8080"

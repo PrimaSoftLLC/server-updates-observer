@@ -3,18 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>by.aurorasoft</groupId>
+    <artifactId>server-updates-observer</artifactId>
+
+    <version>1.0.0</version>
+
+    <packaging>jar</packaging>
+
+    <name>ServerUpdatesObserver</name>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.0-SNAPSHOT</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
-    <groupId>com.example</groupId>
-    <artifactId>server-updates-observer</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>server-updates-observer</name>
-    <description>server-updates-observer</description>
 
     <properties>
         <java.version>17</java.version>
@@ -73,11 +76,6 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>net.jodah</groupId>
             <artifactId>expiringmap</artifactId>
             <version>${expiringmap.version}</version>
@@ -132,15 +130,20 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <imageName>cooll3r/updatesObserver:${project.version}-${imageLabel}</imageName>
-                    <baseImage>adoptopenjdk/openjdk11-openj9:alpine-slim</baseImage>
-                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <imageName>cooll3r/updates-observer:${java.version}-${imageLabel}</imageName>
+                    <baseImage>eclipse-temurin:17-jre-alpine</baseImage>
+                    <entryPoint>["sh", "run.sh"]</entryPoint>
                     <!-- copy the service's jar file from target into the root directory of the image -->
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
+                            <include>server-updates-observer-1.0.0.jar</include>
+                        </resource>
+                        <resource>
+                            <directory>${project.basedir}/docker-run-scripts</directory>
+                            <include>run.sh</include>
+                            <targetPath>/</targetPath>
                         </resource>
                     </resources>
                 </configuration>
@@ -148,9 +151,17 @@
 
         </plugins>
 
-
     </build>
+
     <repositories>
+        <repository>
+            <id>spring-snapshots</id>
+            <name>Spring Snapshots</name>
+            <url>https://repo.spring.io/snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>spring-milestones</id>
             <name>Spring Milestones</name>
@@ -160,30 +171,27 @@
             </snapshots>
         </repository>
         <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
             <id>spring-snapshots</id>
             <name>Spring Snapshots</name>
             <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
             <snapshots>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </snapshots>
         </pluginRepository>
         <pluginRepository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestone</url>
+            <snapshots>
                 <enabled>false</enabled>
-            </releases>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
