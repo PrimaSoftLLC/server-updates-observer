@@ -54,7 +54,7 @@ public class ServerUpdateController {
         return this.findObjectByServerName(
                 serverName,
                 ServerUpdateService::removeByServerName,
-                ResponseEntityUtil::ok
+                ResponseEntity::ok
         );
     }
 

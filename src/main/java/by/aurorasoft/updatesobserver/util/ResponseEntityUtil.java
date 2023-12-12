@@ -20,8 +20,4 @@ public final class ResponseEntityUtil {
                 .body(body);
     }
 
-    //TODO: test
-    public static <T> ResponseEntity<T> ok(final T body) {
-        return ResponseEntity.ok().body(body);
-    }
 }
