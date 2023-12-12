@@ -1,7 +1,7 @@
 package by.aurorasoft.updatesobserver.service;
 
 import by.aurorasoft.updatesobserver.base.AbstractContextTest;
-import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
+import by.aurorasoft.updatesobserver.configuration.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.service.RefreshingServerUpdateService.ServerUpdateRefreshingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,7 +38,7 @@ public final class RefreshingServerUpdateServiceTest extends AbstractContextTest
                 createUpdate("first-server"),
                 createUpdate("second-server")
         );
-        when(this.mockedUpdateService.findAll()).thenReturn(givenUpdates);
+        when(this.mockedUpdateService.getAll()).thenReturn(givenUpdates);
 
         this.refreshingService.refresh();
 
@@ -56,7 +56,7 @@ public final class RefreshingServerUpdateServiceTest extends AbstractContextTest
                 createUpdate("first-server"),
                 createUpdate("second-server")
         );
-        when(this.mockedUpdateService.findAll()).thenReturn(givenUpdates);
+        when(this.mockedUpdateService.getAll()).thenReturn(givenUpdates);
 
         final File expectedUpdateFile = this.createExpectedUpdateFile();
         doThrow(IOException.class).when(this.mockedObjectMapper).writeValue(eq(expectedUpdateFile), same(givenUpdates));

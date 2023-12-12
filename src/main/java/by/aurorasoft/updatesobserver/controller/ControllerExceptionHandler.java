@@ -1,16 +1,13 @@
 package by.aurorasoft.updatesobserver.controller;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
-import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
-import static java.time.LocalDateTime.now;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
@@ -36,23 +33,17 @@ public final class ControllerExceptionHandler {
     }
 
     private static <E extends Exception> ResponseEntity<RestErrorResponse> createResponseEntity(
-            final E exception,
-            final ExceptionMessageExtractor<E> messageExtractor,
-            final HttpStatus httpStatus
-    ) {
-        final String message = messageExtractor.extract(exception);
-        final RestErrorResponse errorResponse = createErrorResponse(message, httpStatus);
+            E exception,
+            ExceptionMessageExtractor<E> messageExtractor,
+            HttpStatus httpStatus) {
+        String message = messageExtractor.extract(exception);
+        RestErrorResponse errorResponse = createErrorResponse(message, httpStatus);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     private static RestErrorResponse createErrorResponse(final String message, final HttpStatus httpStatus) {
-        final LocalDateTime currentDateTime = now();
+        Instant currentDateTime = Instant.now();
         return new RestErrorResponse(httpStatus, message, currentDateTime);
-    }
-
-    private record RestErrorResponse(HttpStatus httpStatus,
-                                     String message,
-                                     @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH-mm-ss") LocalDateTime dateTime) {
     }
 
     @FunctionalInterface

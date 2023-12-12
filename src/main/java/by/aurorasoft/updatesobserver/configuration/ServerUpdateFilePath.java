@@ -1,4 +1,4 @@
-package by.aurorasoft.updatesobserver.configuration.property;
+package by.aurorasoft.updatesobserver.configuration;
 
 import by.aurorasoft.updatesobserver.util.FileUtil.FilePath;
 import lombok.NoArgsConstructor;

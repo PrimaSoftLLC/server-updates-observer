@@ -1,6 +1,6 @@
 package by.aurorasoft.updatesobserver.storage.factory;
 
-import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
+import by.aurorasoft.updatesobserver.configuration.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,25 +40,8 @@ public final class ServerUpdateLoader {
     }
 
     static final class ServerUpdateLoadingException extends RuntimeException {
-
-        @SuppressWarnings("unused")
-        public ServerUpdateLoadingException() {
-
-        }
-
-        @SuppressWarnings("unused")
-        public ServerUpdateLoadingException(final String description) {
-            super(description);
-        }
-
         public ServerUpdateLoadingException(final Exception cause) {
             super(cause);
         }
-
-        @SuppressWarnings("unused")
-        public ServerUpdateLoadingException(final String description, final Exception cause) {
-            super(description, cause);
-        }
-
     }
 }

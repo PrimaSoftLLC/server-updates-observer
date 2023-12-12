@@ -5,9 +5,6 @@ import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDateTime;
-
-import static by.aurorasoft.updatesobserver.util.ReflectionUtil.findProperty;
 import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -15,78 +12,37 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 
 public final class ControllerExceptionHandlerTest {
-    private static final String FIELD_NAME_ERROR_RESPONSE_HTTP_STATUS = "httpStatus";
-    private static final String FIELD_NAME_ERROR_RESPONSE_MESSAGE = "message";
-    private static final String FIELD_NAME_ERROR_RESPONSE_DATE_TIME = "dateTime";
 
     private final ControllerExceptionHandler exceptionHandler = new ControllerExceptionHandler();
 
     @Test
     public void exceptionShouldBeHandled() {
-        final String givenDescription = "exception-description";
-        final Exception givenException = new Exception(givenDescription);
+        var givenDescription = "exception-description";
+        var givenException = new Exception(givenDescription);
 
-        final ResponseEntity<?> actual = this.exceptionHandler.handleException(givenException);
-        final HttpStatus expectedHttpStatus = INTERNAL_SERVER_ERROR;
-        assertSame(expectedHttpStatus, actual.getStatusCode());
+        ResponseEntity<?> actual = exceptionHandler.handleException(givenException);
 
-        final Object actualErrorResponse = actual.getBody();
-
-        final HttpStatus actualErrorResponseHttpStatus = findErrorResponseHttpStatus(actualErrorResponse);
-        assertSame(expectedHttpStatus, actualErrorResponseHttpStatus);
-
-        final String actualErrorResponseMessage = findErrorResponseMessage(actualErrorResponse);
-        assertSame(givenDescription, actualErrorResponseMessage);
-
-        final LocalDateTime actualErrorResponseDateTime = findErrorResponseDateTime(actualErrorResponse);
-        assertNotNull(actualErrorResponseDateTime);
+        assertErrorResponse(givenDescription, INTERNAL_SERVER_ERROR, actual);
     }
 
     @Test
     public void constraintViolationExceptionShouldBeHandled() {
-        final String givenDescription = "exception-description";
-        final ConstraintViolationException givenException = new ConstraintViolationException(
-                givenDescription,
-                emptySet()
-        );
+        var givenDescription = "exception-description";
+        var givenException = new ConstraintViolationException(givenDescription, emptySet());
 
-        final ResponseEntity<?> actual = this.exceptionHandler.handleException(givenException);
-        final HttpStatus expectedHttpStatus = NOT_ACCEPTABLE;
+        ResponseEntity<?> actual = this.exceptionHandler.handleException(givenException);
+
+        assertErrorResponse(givenDescription, NOT_ACCEPTABLE, actual);
+    }
+
+    private void assertErrorResponse(String expectedDescription, HttpStatus expectedHttpStatus, ResponseEntity<?> actual){
         assertSame(expectedHttpStatus, actual.getStatusCode());
 
-        final Object actualErrorResponse = actual.getBody();
+        RestErrorResponse actualErrorResponse = (RestErrorResponse) actual.getBody();
 
-        final HttpStatus actualErrorResponseHttpStatus = findErrorResponseHttpStatus(actualErrorResponse);
-        assertSame(expectedHttpStatus, actualErrorResponseHttpStatus);
-
-        final String actualErrorResponseMessage = findErrorResponseMessage(actualErrorResponse);
-        assertSame(givenDescription, actualErrorResponseMessage);
-
-        final LocalDateTime actualErrorResponseDateTime = findErrorResponseDateTime(actualErrorResponse);
-        assertNotNull(actualErrorResponseDateTime);
-    }
-
-    private static HttpStatus findErrorResponseHttpStatus(final Object errorResponse) {
-        return findProperty(
-                errorResponse,
-                FIELD_NAME_ERROR_RESPONSE_HTTP_STATUS,
-                HttpStatus.class
-        );
-    }
-
-    private static String findErrorResponseMessage(final Object errorResponse) {
-        return findProperty(
-                errorResponse,
-                FIELD_NAME_ERROR_RESPONSE_MESSAGE,
-                String.class
-        );
-    }
-
-    private static LocalDateTime findErrorResponseDateTime(final Object errorResponse) {
-        return findProperty(
-                errorResponse,
-                FIELD_NAME_ERROR_RESPONSE_DATE_TIME,
-                LocalDateTime.class
-        );
+        assert actualErrorResponse != null;
+        assertSame(expectedHttpStatus, actualErrorResponse.getHttpStatus());
+        assertSame(expectedDescription, actualErrorResponse.getMessage());
+        assertNotNull(actualErrorResponse.getTime());
     }
 }

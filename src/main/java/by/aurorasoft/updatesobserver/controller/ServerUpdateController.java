@@ -13,12 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
-import static by.aurorasoft.updatesobserver.util.ResponseEntityUtil.noContent;
-import static by.aurorasoft.updatesobserver.util.ResponseEntityUtil.ok;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 @RestController
@@ -28,41 +23,34 @@ import static java.time.temporal.ChronoUnit.DAYS;
 public class ServerUpdateController {
     private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(1, DAYS);
 
-    private final ServerUpdateFactory updateFactory;
-    private final ServerUpdateService updateService;
+    private final ServerUpdateFactory factory;
+    private final ServerUpdateService service;
 
+    /**
+     * @param serverName             the name of the server
+     * @param downtimeInMinutes      the downtime in minutes
+     * @param extraLifetimeInMinutes the extra lifetime in minutes after downtime, on this time will be return downtime
+     * @return a response entity indicating the outcome of the operation
+     */
     @PostMapping
-    public ResponseEntity<?> createAndSaveIfAlive(@RequestParam(name = "serverName") @NotBlank final String serverName,
-                                                  @RequestParam(name = "downtime") @Min(1) final long downtimeInMinutes,
-                                                  @RequestParam(name = "extraLifetime", defaultValue = "10") @Min(1) final long extraLifetimeInMinutes) {
-        final ServerUpdate update = this.updateFactory.create(serverName, downtimeInMinutes, extraLifetimeInMinutes);
-        this.updateService.saveIfAlive(update);
-        return noContent();
+    public ResponseEntity<Void> create(@RequestParam(name = "serverName") @NotBlank String serverName,
+                                       @RequestParam(name = "downtime") @Min(1) long downtimeInMinutes,
+                                       @RequestParam(name = "extraLifetime", defaultValue = "10") @Min(1) long extraLifetimeInMinutes) {
+        ServerUpdate update = factory.create(serverName, downtimeInMinutes, extraLifetimeInMinutes);
+        service.put(update);
+        return ResponseEntityUtil.noContent();
     }
 
     @GetMapping
-    public ResponseEntity<Instant> findUpdateDowntime(@RequestParam(name = "serverName") @NotBlank final String serverName) {
-        return this.findObjectByServerName(
-                serverName,
-                ServerUpdateService::findUpdateDowntime,
-                dateTime -> ok(dateTime, UPDATE_DOWNTIME_CACHE_DURATION)
-        );
+    public ResponseEntity<Instant> get(@RequestParam(name = "serverName") @NotBlank String serverName) {
+        return service.get(serverName)
+                .map(dateTime -> ResponseEntityUtil.ok(dateTime, UPDATE_DOWNTIME_CACHE_DURATION))
+                .orElseGet(ResponseEntityUtil::noContent);
     }
 
     @DeleteMapping
-    public ResponseEntity<ServerUpdate> removeByServerName(@RequestParam(name = "serverName") @NotBlank final String serverName) {
-        return this.findObjectByServerName(
-                serverName,
-                ServerUpdateService::removeByServerName,
-                ResponseEntity::ok
-        );
-    }
-
-    private <T> ResponseEntity<T> findObjectByServerName(final String serverName,
-                                                         final BiFunction<ServerUpdateService, String, Optional<T>> founder,
-                                                         final Function<T, ResponseEntity<T>> responseEntityFactory) {
-        return founder.apply(this.updateService, serverName)
-                .map(responseEntityFactory)
-                .orElseGet(ResponseEntityUtil::noContent);
+    public ResponseEntity<Void> remove(@RequestParam(name = "serverName") @NotBlank String serverName) {
+        service.remove(serverName);
+        return ResponseEntityUtil.noContent();
     }
 }

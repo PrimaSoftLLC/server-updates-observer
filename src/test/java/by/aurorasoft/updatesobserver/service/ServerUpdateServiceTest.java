@@ -37,7 +37,7 @@ public final class ServerUpdateServiceTest {
     public void updateShouldBeSavedIfAlive() {
         final ServerUpdate givenUpdate = ServerUpdate.builder().build();
 
-        this.updateService.saveIfAlive(givenUpdate);
+        this.updateService.put(givenUpdate);
 
         verify(this.mockedUpdateStorage, times(1)).saveIfAlive(same(givenUpdate));
     }
@@ -51,7 +51,7 @@ public final class ServerUpdateServiceTest {
 
         when(this.mockedUpdateStorage.findByServerName(same(givenServerName))).thenReturn(Optional.of(givenUpdate));
 
-        final Optional<Instant> optionalActual = this.updateService.findUpdateDowntime(givenServerName);
+        final Optional<Instant> optionalActual = this.updateService.get(givenServerName);
         assertTrue(optionalActual.isPresent());
         final Instant actual = optionalActual.get();
         assertSame(givenDowntime, actual);
@@ -63,7 +63,7 @@ public final class ServerUpdateServiceTest {
 
         when(this.mockedUpdateStorage.findByServerName(same(givenServerName))).thenReturn(empty());
 
-        final Optional<Instant> optionalActual = this.updateService.findUpdateDowntime(givenServerName);
+        final Optional<Instant> optionalActual = this.updateService.get(givenServerName);
         assertTrue(optionalActual.isEmpty());
     }
 
@@ -77,7 +77,7 @@ public final class ServerUpdateServiceTest {
 
         when(this.mockedUpdateStorage.findAll()).thenReturn(givenUpdates);
 
-        final Collection<ServerUpdate> actual = this.updateService.findAll();
+        final Collection<ServerUpdate> actual = this.updateService.getAll();
         assertSame(givenUpdates, actual);
     }
 
@@ -89,7 +89,7 @@ public final class ServerUpdateServiceTest {
         when(this.mockedUpdateStorage.removeByServerName(same(givenServerName)))
                 .thenReturn(Optional.of(givenServerUpdate));
 
-        final Optional<ServerUpdate> optionalActual = this.updateService.removeByServerName(givenServerName);
+        final Optional<ServerUpdate> optionalActual = this.updateService.remove(givenServerName);
         assertTrue(optionalActual.isPresent());
         final ServerUpdate actual = optionalActual.get();
         assertSame(givenServerUpdate, actual);
@@ -101,7 +101,7 @@ public final class ServerUpdateServiceTest {
 
         when(this.mockedUpdateStorage.removeByServerName(same(givenServerName))).thenReturn(empty());
 
-        final Optional<ServerUpdate> optionalActual = this.updateService.removeByServerName(givenServerName);
+        final Optional<ServerUpdate> optionalActual = this.updateService.remove(givenServerName);
         assertTrue(optionalActual.isEmpty());
     }
 

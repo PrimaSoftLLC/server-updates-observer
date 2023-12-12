@@ -11,7 +11,7 @@ import static java.time.Instant.now;
 @Component
 public final class ServerUpdateFactory {
 
-    public ServerUpdate create(final String serverName, final long downtimeInMinutes, final long extraLifetimeInMinutes) {
+    public ServerUpdate create(String serverName, long downtimeInMinutes, long extraLifetimeInMinutes) {
         final Instant now = now();
         final Instant downtime = plusMinutes(now, downtimeInMinutes);
         final Instant lifetime = plusMinutes(downtime, extraLifetimeInMinutes);

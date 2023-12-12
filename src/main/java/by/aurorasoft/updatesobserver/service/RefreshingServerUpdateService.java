@@ -1,6 +1,6 @@
 package by.aurorasoft.updatesobserver.service;
 
-import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
+import by.aurorasoft.updatesobserver.configuration.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -26,10 +26,10 @@ public final class RefreshingServerUpdateService {
         this.updateFile = createFile(filePath);
     }
 
-    @Scheduled(cron = "0 */30 * ? * *")
+    @Scheduled(fixedDelay = 300_000)
     public void refresh() {
         try {
-            final Collection<ServerUpdate> updates = this.updateService.findAll();
+            final Collection<ServerUpdate> updates = this.updateService.getAll();
             this.objectMapper.writeValue(this.updateFile, updates);
         } catch (final IOException cause) {
             throw new ServerUpdateRefreshingException(cause);
@@ -38,23 +38,8 @@ public final class RefreshingServerUpdateService {
 
     static final class ServerUpdateRefreshingException extends RuntimeException {
 
-        @SuppressWarnings("unused")
-        public ServerUpdateRefreshingException() {
-
-        }
-
-        @SuppressWarnings("unused")
-        public ServerUpdateRefreshingException(final String description) {
-            super(description);
-        }
-
         public ServerUpdateRefreshingException(final Exception cause) {
             super(cause);
-        }
-
-        @SuppressWarnings("unused")
-        public ServerUpdateRefreshingException(final String description, final Exception cause) {
-            super(description, cause);
         }
     }
 }

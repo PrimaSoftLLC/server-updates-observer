@@ -14,20 +14,20 @@ import java.util.Optional;
 public final class ServerUpdateService {
     private final ServerUpdateStorage updateStorage;
 
-    public void saveIfAlive(final ServerUpdate update) {
-        this.updateStorage.saveIfAlive(update);
+    public void put(ServerUpdate update) {
+        updateStorage.saveIfAlive(update);
     }
 
-    public Optional<Instant> findUpdateDowntime(final String serverName) {
-        final Optional<ServerUpdate> optionalUpdate = this.updateStorage.findByServerName(serverName);
-        return optionalUpdate.map(ServerUpdate::getDowntime);
+    public Optional<Instant> get(String serverName) {
+        return updateStorage.findByServerName(serverName)
+                .map(ServerUpdate::getDowntime);
     }
 
-    public Collection<ServerUpdate> findAll() {
-        return this.updateStorage.findAll();
+    public Collection<ServerUpdate> getAll() {
+        return updateStorage.findAll();
     }
 
-    public Optional<ServerUpdate> removeByServerName(final String serverName) {
-        return this.updateStorage.removeByServerName(serverName);
+    public Optional<ServerUpdate> remove(String serverName) {
+        return updateStorage.removeByServerName(serverName);
     }
 }

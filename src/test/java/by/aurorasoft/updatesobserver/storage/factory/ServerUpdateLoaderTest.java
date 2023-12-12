@@ -1,6 +1,6 @@
 package by.aurorasoft.updatesobserver.storage.factory;
 
-import by.aurorasoft.updatesobserver.configuration.property.ServerUpdateFilePath;
+import by.aurorasoft.updatesobserver.configuration.ServerUpdateFilePath;
 import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import by.aurorasoft.updatesobserver.storage.factory.ServerUpdateLoader.ServerUpdateLoadingException;
 import by.aurorasoft.updatesobserver.util.FileUtil;
