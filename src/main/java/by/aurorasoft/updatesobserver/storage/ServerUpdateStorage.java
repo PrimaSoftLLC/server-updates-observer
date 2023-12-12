@@ -40,6 +40,10 @@ public final class ServerUpdateStorage {
         return this.updatesByServerNames.values();
     }
 
+    public void removeByServerName(final String serverName) {
+        this.updatesByServerNames.remove(serverName);
+    }
+
     private static ExpiringMap<String, ServerUpdate> createEmptyExpiringMap(final int maxSize) {
         return ExpiringMap.builder()
                 .maxSize(maxSize)
