@@ -27,7 +27,6 @@
         <expiringmap.version>0.5.10</expiringmap.version>
         <openapi.version>2.2.0</openapi.version>
         <lombok.version>1.18.26</lombok.version>
-        <imageLabel>DEV</imageLabel>
     </properties>
 
     <dependencies>
@@ -130,7 +129,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <imageName>cooll3r/updates-observer:${java.version}-${imageLabel}</imageName>
+                    <imageName>cooll3r/updates-observer:${version}</imageName>
                     <baseImage>eclipse-temurin:17-jre-alpine</baseImage>
                     <entryPoint>["sh", "run.sh"]</entryPoint>
                     <!-- copy the service's jar file from target into the root directory of the image -->
