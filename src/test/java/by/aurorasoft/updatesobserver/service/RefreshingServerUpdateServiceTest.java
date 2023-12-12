@@ -19,6 +19,11 @@ import static org.mockito.Mockito.*;
 
 public final class RefreshingServerUpdateServiceTest extends AbstractContextTest {
 
+    private static final Collection<ServerUpdate> GIVEN_UPDATES = List.of(
+            createUpdate("first-server"),
+            createUpdate("second-server")
+    );
+
     @MockBean
     private ServerUpdateService mockedUpdateService;
 
@@ -32,36 +37,29 @@ public final class RefreshingServerUpdateServiceTest extends AbstractContextTest
     private RefreshingServerUpdateService refreshingService;
 
     @Test
-    public void updatesShouldBeRefreshed()
-            throws Exception {
-        final Collection<ServerUpdate> givenUpdates = List.of(
-                createUpdate("first-server"),
-                createUpdate("second-server")
-        );
-        when(this.mockedUpdateService.getAll()).thenReturn(givenUpdates);
+    public void updatesShouldBeRefreshed() throws Exception {
+        mockUpdateService();
 
-        this.refreshingService.refresh();
+        refreshingService.refresh();
 
-        final File expectedUpdateFile = this.createExpectedUpdateFile();
-        verify(this.mockedObjectMapper, times(1)).writeValue(
+        File expectedUpdateFile = createExpectedUpdateFile();
+        verify(mockedObjectMapper, times(1)).writeValue(
                 eq(expectedUpdateFile),
-                same(givenUpdates)
+                same(GIVEN_UPDATES)
         );
     }
 
     @Test(expected = ServerUpdateRefreshingException.class)
-    public void updatesShouldNotBeRefreshed()
-            throws Exception {
-        final Collection<ServerUpdate> givenUpdates = List.of(
-                createUpdate("first-server"),
-                createUpdate("second-server")
-        );
-        when(this.mockedUpdateService.getAll()).thenReturn(givenUpdates);
+    public void updatesShouldNotBeRefreshed() throws Exception {
+        mockUpdateService();
 
-        final File expectedUpdateFile = this.createExpectedUpdateFile();
-        doThrow(IOException.class).when(this.mockedObjectMapper).writeValue(eq(expectedUpdateFile), same(givenUpdates));
+        doThrow(IOException.class).when(mockedObjectMapper).writeValue(any(File.class), anyList());
 
-        this.refreshingService.refresh();
+        refreshingService.refresh();
+    }
+
+    private void mockUpdateService() {
+        when(this.mockedUpdateService.getAll()).thenReturn(GIVEN_UPDATES);
     }
 
     private static ServerUpdate createUpdate(final String serverName) {
