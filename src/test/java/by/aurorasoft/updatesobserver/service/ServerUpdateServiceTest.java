@@ -81,6 +81,15 @@ public final class ServerUpdateServiceTest {
         assertSame(givenUpdates, actual);
     }
 
+    @Test
+    public void updateShouldBeRemovedByServerName() {
+        final String givenServerName = "server-name";
+
+        this.updateService.removeByServerName(givenServerName);
+
+        verify(this.mockedUpdateStorage, times(1)).removeByServerName(same(givenServerName));
+    }
+
     private static ServerUpdate createUpdateWithDowntime(final Instant downtime) {
         return ServerUpdate.builder()
                 .downtime(downtime)

@@ -26,4 +26,8 @@ public final class ServerUpdateService {
     public Collection<ServerUpdate> findAll() {
         return this.updateStorage.findAll();
     }
+
+    public void removeByServerName(final String serverName) {
+        this.updateStorage.removeByServerName(serverName);
+    }
 }
