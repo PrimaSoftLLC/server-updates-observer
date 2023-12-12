@@ -4,7 +4,9 @@ import by.aurorasoft.updatesobserver.model.ServerUpdate;
 import net.jodah.expiringmap.ExpiringMap;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -32,12 +34,15 @@ public final class ServerUpdateStorage {
     }
 
     public Optional<ServerUpdate> findByServerName(final String serverName) {
-        final ServerUpdate update = this.updatesByServerNames.get(serverName);
-        return ofNullable(update);
+        return this.extractByServerName(serverName, Map::get);
     }
 
     public Collection<ServerUpdate> findAll() {
         return this.updatesByServerNames.values();
+    }
+
+    public Optional<ServerUpdate> removeByServerName(final String serverName) {
+        return this.extractByServerName(serverName, Map::remove);
     }
 
     private static ExpiringMap<String, ServerUpdate> createEmptyExpiringMap(final int maxSize) {
@@ -50,5 +55,11 @@ public final class ServerUpdateStorage {
 
     private void reloadAllAlive(final Collection<ServerUpdate> updates) {
         updates.forEach(this::saveIfAlive);
+    }
+
+    private Optional<ServerUpdate> extractByServerName(final String serverName,
+                                                       final BiFunction<Map<String, ServerUpdate>, String, ServerUpdate> extractor) {
+        final ServerUpdate update = extractor.apply(this.updatesByServerNames, serverName);
+        return ofNullable(update);
     }
 }
