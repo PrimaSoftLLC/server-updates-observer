@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static by.aurorasoft.updatesobserver.util.ResponseEntityUtil.noContent;
 import static by.aurorasoft.updatesobserver.util.ResponseEntityUtil.ok;
@@ -39,14 +42,27 @@ public class ServerUpdateController {
 
     @GetMapping
     public ResponseEntity<Instant> findUpdateDowntime(@RequestParam(name = "serverName") @NotBlank final String serverName) {
-        return this.updateService.findUpdateDowntime(serverName)
-                .map(datetime -> ok(datetime, UPDATE_DOWNTIME_CACHE_DURATION))
-                .orElseGet(ResponseEntityUtil::noContent);
+        return this.findObjectByServerName(
+                serverName,
+                ServerUpdateService::findUpdateDowntime,
+                dateTime -> ok(dateTime, UPDATE_DOWNTIME_CACHE_DURATION)
+        );
     }
 
-//    @DeleteMapping
-//    public ResponseEntity<?> removeByServerName(@RequestParam(name = "serverName") @NotBlank final String serverName) {
-//        this.updateService.removeByServerName(serverName);
-//        return ok()
-//    }
+    @DeleteMapping
+    public ResponseEntity<ServerUpdate> removeByServerName(@RequestParam(name = "serverName") @NotBlank final String serverName) {
+        return this.findObjectByServerName(
+                serverName,
+                ServerUpdateService::removeByServerName,
+                ResponseEntityUtil::ok
+        );
+    }
+
+    private <T> ResponseEntity<T> findObjectByServerName(final String serverName,
+                                                         final BiFunction<ServerUpdateService, String, Optional<T>> founder,
+                                                         final Function<T, ResponseEntity<T>> responseEntityFactory) {
+        return founder.apply(this.updateService, serverName)
+                .map(responseEntityFactory)
+                .orElseGet(ResponseEntityUtil::noContent);
+    }
 }
