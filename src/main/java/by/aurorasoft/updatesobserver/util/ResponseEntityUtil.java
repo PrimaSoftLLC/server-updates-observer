@@ -19,4 +19,5 @@ public final class ResponseEntityUtil {
                 .cacheControl(maxAge(maxAge).cachePrivate())
                 .body(body);
     }
+
 }

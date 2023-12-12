@@ -302,6 +302,71 @@ public final class ServerUpdateStorageTest {
         assertTrue(actual.isEmpty());
     }
 
+    @Test
+    public void updateShouldBeRemovedByServerName() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+
+        final Optional<ServerUpdate> optionalActual = givenStorage.removeByServerName(firstGivenUpdateServerName);
+        assertTrue(optionalActual.isPresent());
+        final ServerUpdate actual = optionalActual.get();
+        assertSame(firstGivenUpdate, actual);
+
+        final Collection<ServerUpdate> actualStorageUpdates = givenStorage.findAll();
+        final Set<ServerUpdate> actualStorageUpdatesAsSet = new HashSet<>(actualStorageUpdates);
+        final Set<ServerUpdate> expectedStorageUpdatesAsSet = Set.of(secondGivenUpdate);
+        assertEquals(expectedStorageUpdatesAsSet, actualStorageUpdatesAsSet);
+    }
+
+    @Test
+    public void updateShouldBeNotRemovedByNotExistingServerName() {
+        final int givenStorageMaxSize = 5;
+
+        final String firstGivenUpdateServerName = "first-server";
+        final long firstGivenUpdateRemainingLifetimeInMillis = 1000;
+        final ServerUpdate firstGivenUpdate = createAliveUpdate(
+                firstGivenUpdateServerName,
+                firstGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final String secondGivenUpdateServerName = "second-server";
+        final long secondGivenUpdateRemainingLifetimeInMillis = 400;
+        final ServerUpdate secondGivenUpdate = createAliveUpdate(
+                secondGivenUpdateServerName,
+                secondGivenUpdateRemainingLifetimeInMillis
+        );
+
+        final List<ServerUpdate> givenUpdates = List.of(firstGivenUpdate, secondGivenUpdate);
+
+        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
+        final String givenServerNameToRemoveUpdate = "not-existing-server";
+
+        final Optional<ServerUpdate> optionalActual = givenStorage.removeByServerName(givenServerNameToRemoveUpdate);
+        assertTrue(optionalActual.isEmpty());
+
+        final Collection<ServerUpdate> actualStorageUpdates = givenStorage.findAll();
+        final Set<ServerUpdate> actualStorageUpdatesAsSet = new HashSet<>(actualStorageUpdates);
+        final Set<ServerUpdate> expectedStorageUpdatesAsSet = new HashSet<>(givenUpdates);
+        assertEquals(expectedStorageUpdatesAsSet, actualStorageUpdatesAsSet);
+    }
+
     @SuppressWarnings("unchecked")
     private static ExpiringMap<String, ServerUpdate> findUpdatesByServerNames(final ServerUpdateStorage storage) {
         return findProperty(

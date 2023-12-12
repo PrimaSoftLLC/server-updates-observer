@@ -27,8 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -206,6 +205,50 @@ public class ServerUpdateControllerTest {
         verifyNoInteractions(this.mockedUpdateService);
     }
 
+    @Test
+    public void updateShouldBeRemovedByServerName() {
+        final String givenServerName = "server";
+
+        final ServerUpdate givenUpdate = createUpdate(
+                givenServerName,
+                "2023-11-16T10:48:30Z",
+                "2023-11-16T10:50:30Z"
+        );
+
+        when(this.mockedUpdateService.removeByServerName(same(givenServerName))).thenReturn(Optional.of(givenUpdate));
+
+        final String actual = this.doRequestToRemoveUpdateExpectingOkStatus(givenServerName);
+        final String expected = "{\"serverName\":\"server\","
+                + "\"downtime\":\"2023-11-16T10:48:30Z\","
+                + "\"lifetime\":\"2023-11-16T10:50:30Z\"}";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void updateShouldNotBeRemovedByServerName() {
+        final String givenServerName = "server";
+
+        when(this.mockedUpdateService.removeByServerName(same(givenServerName))).thenReturn(empty());
+
+        final String actual = this.doRequestToRemoveUpdateExpectingNoContentStatus(givenServerName);
+        final String expected = "";
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void updateShouldNotBeRemovedByServerNameBecauseOfBlankServerName() {
+        final String givenServerName = "   ";
+
+        final String actual = this.doRequestToRemoveUpdateExpectingNotAcceptableStatus(givenServerName);
+        final String expectedRegex = "\\{\"httpStatus\":\"NOT_ACCEPTABLE\","
+                + "\"message\":\"removeByServerName\\.serverName: must not be blank\","
+                + "\"dateTime\":\"\\d{4}-\\d{2}-\\d{2} \\d{2}-\\d{2}-\\d{2}\"}";
+        assertTrue(actual.matches(expectedRegex));
+
+        verifyNoInteractions(this.mockedUpdateService);
+    }
+
+
     @SuppressWarnings("SameParameterValue")
     private static ServerUpdate createUpdate(final String serverName,
                                              final String downtimeAsString,
@@ -290,6 +333,31 @@ public class ServerUpdateControllerTest {
                                                  final ResultHttpStatusConfigurer resultHttpStatusConfigurer) {
         return this.doRequest(
                 () -> get(CONTROLLER_URL)
+                        .contentType(APPLICATION_JSON)
+                        .param(REQUEST_PARAM_NAME_SERVER_NAME, serverName),
+                resultHttpStatusConfigurer
+        );
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String doRequestToRemoveUpdateExpectingOkStatus(final String serverName) {
+        return this.doRequestToRemoveUpdate(serverName, StatusResultMatchers::isOk);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String doRequestToRemoveUpdateExpectingNoContentStatus(final String serverName) {
+        return this.doRequestToRemoveUpdate(serverName, StatusResultMatchers::isNoContent);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String doRequestToRemoveUpdateExpectingNotAcceptableStatus(final String serverName) {
+        return this.doRequestToRemoveUpdate(serverName, StatusResultMatchers::isNotAcceptable);
+    }
+
+    private String doRequestToRemoveUpdate(final String serverName,
+                                           final ResultHttpStatusConfigurer resultHttpStatusConfigurer) {
+        return this.doRequest(
+                () -> delete(CONTROLLER_URL)
                         .contentType(APPLICATION_JSON)
                         .param(REQUEST_PARAM_NAME_SERVER_NAME, serverName),
                 resultHttpStatusConfigurer

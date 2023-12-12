@@ -21,7 +21,7 @@ public final class ResponseEntityUtilTest {
     }
 
     @Test
-    public void okResponseEntityShouldBeCreated() {
+    public void okResponseEntityWithMaxAgeShouldBeCreated() {
         final Object givenBody = new Object();
         final Duration givenMaxAge = Duration.of(1, SECONDS);
 
