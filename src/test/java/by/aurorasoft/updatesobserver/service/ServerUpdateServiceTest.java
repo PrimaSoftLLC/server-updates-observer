@@ -84,10 +84,25 @@ public final class ServerUpdateServiceTest {
     @Test
     public void updateShouldBeRemovedByServerName() {
         final String givenServerName = "server-name";
+        final ServerUpdate givenServerUpdate = createUpdate(givenServerName);
 
-        this.updateService.removeByServerName(givenServerName);
+        when(this.mockedUpdateStorage.removeByServerName(same(givenServerName)))
+                .thenReturn(Optional.of(givenServerUpdate));
 
-        verify(this.mockedUpdateStorage, times(1)).removeByServerName(same(givenServerName));
+        final Optional<ServerUpdate> optionalActual = this.updateService.removeByServerName(givenServerName);
+        assertTrue(optionalActual.isPresent());
+        final ServerUpdate actual = optionalActual.get();
+        assertSame(givenServerUpdate, actual);
+    }
+
+    @Test
+    public void updateShouldNotBeRemovedByServerName() {
+        final String givenServerName = "server-name";
+
+        when(this.mockedUpdateStorage.removeByServerName(same(givenServerName))).thenReturn(empty());
+
+        final Optional<ServerUpdate> optionalActual = this.updateService.removeByServerName(givenServerName);
+        assertTrue(optionalActual.isEmpty());
     }
 
     private static ServerUpdate createUpdateWithDowntime(final Instant downtime) {

@@ -327,7 +327,7 @@ public final class ServerUpdateStorageTest {
         final Optional<ServerUpdate> optionalActual = givenStorage.removeByServerName(firstGivenUpdateServerName);
         assertTrue(optionalActual.isPresent());
         final ServerUpdate actual = optionalActual.get();
-        assertEquals(firstGivenUpdate, actual);
+        assertSame(firstGivenUpdate, actual);
 
         final Collection<ServerUpdate> actualStorageUpdates = givenStorage.findAll();
         final Set<ServerUpdate> actualStorageUpdatesAsSet = new HashSet<>(actualStorageUpdates);
