@@ -18,10 +18,11 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 
-import static by.aurorasoft.updatesobserver.controller.RestErrorResponse.Fields.*;
+import static by.aurorasoft.updatesobserver.controller.RestErrorResponse.Fields.httpStatus;
+import static by.aurorasoft.updatesobserver.controller.RestErrorResponse.Fields.message;
 import static java.time.Instant.parse;
 import static java.util.Optional.empty;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -67,7 +68,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void create_blankServerName_shouldResponseHasErrorMessage() {
+    public void create_blankServerName_shouldResponseWithErrorMessage() {
         String actual = mockHttp.postExpectNotAcceptable(GIVEN_EMPTY_SERVER_NAME, GIVEN_DOWNTIME, GIVEN_EXTRA_LIFETIME);
 
         assertNotAcceptableResponse(actual, "create.serverName: must not be blank");
@@ -77,7 +78,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void create_notValidDowntime_shouldResponseHasErrorMessage() {
+    public void create_notValidDowntime_shouldResponseWithErrorMessage() {
         int givenDowntime = 0;
 
         String actual = mockHttp.postExpectNotAcceptable(GIVEN_SERVER_NAME, givenDowntime, GIVEN_EXTRA_LIFETIME);
@@ -89,7 +90,7 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void create_notValidExtraLifetime_shouldResponseHasErrorMessage() {
+    public void create_notValidExtraLifetime_shouldResponseWithErrorMessage() {
         int givenExtraLifetime = 0;
 
         String actual = mockHttp.postExpectNotAcceptable(GIVEN_SERVER_NAME, GIVEN_DOWNTIME, givenExtraLifetime);
@@ -112,16 +113,16 @@ public class ServerUpdateControllerTest {
     }
 
     @Test
-    public void get_serverNameNotExist_shouldResponseHasErrorMessage() {
+    public void get_serverNameNotExist_shouldResponseWithErrorMessage() {
         String notExistServerName = "not-exist";
+        
         when(service.get(eq(notExistServerName))).thenReturn(empty());
 
         mockHttp.getExpectNoContent(notExistServerName);
     }
 
     @Test
-    public void get_serverNameIsBlank_shouldResponseHasErrorMessage() {
-
+    public void get_serverNameIsBlank_shouldResponseWithErrorMessage() {
         String actual = mockHttp.getExpectNotAcceptable(GIVEN_EMPTY_SERVER_NAME);
 
         assertNotAcceptableResponse(actual, "get.serverName: must not be blank");
@@ -138,7 +139,7 @@ public class ServerUpdateControllerTest {
 
 
     @Test
-    public void delete_serverNameIsBlank_shouldResponseHasErrorMessage() {
+    public void delete_serverNameIsBlank_shouldResponseWithErrorMessage() {
         String actual = mockHttp.deleteExpectNotAcceptable(GIVEN_EMPTY_SERVER_NAME);
 
         assertNotAcceptableResponse(actual, "remove.serverName: must not be blank");
@@ -149,6 +150,7 @@ public class ServerUpdateControllerTest {
 
     @SneakyThrows
     private void assertNotAcceptableResponse(String actualResponse, String expectedMessage) {
+        //noinspection unchecked
         Map<String, Object> responseMap = objectMapper.readValue(actualResponse, Map.class);
 
         assertEquals("NOT_ACCEPTABLE", responseMap.get(httpStatus));
@@ -159,7 +161,6 @@ public class ServerUpdateControllerTest {
 
 
     private void mockFactory() {
-        when(factory.create(anyString(), anyLong(), anyLong()))
-                .thenReturn(givenUpdate);
+        when(factory.create(anyString(), anyLong(), anyLong())).thenReturn(givenUpdate);
     }
 }

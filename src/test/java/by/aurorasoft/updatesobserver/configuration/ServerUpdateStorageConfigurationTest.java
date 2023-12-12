@@ -15,12 +15,12 @@ public final class ServerUpdateStorageConfigurationTest {
 
     @Test
     public void storageShouldBeCreated() {
-        final ServerUpdateStorageFactory givenFactory = mock(ServerUpdateStorageFactory.class);
+        ServerUpdateStorageFactory givenFactory = mock(ServerUpdateStorageFactory.class);
 
-        final ServerUpdateStorage givenStorage = new ServerUpdateStorage(MAX_VALUE, emptyList());
+        ServerUpdateStorage givenStorage = new ServerUpdateStorage(MAX_VALUE, emptyList());
         when(givenFactory.create()).thenReturn(givenStorage);
 
-        final ServerUpdateStorage actual = this.configuration.serverUpdateStorage(givenFactory);
+        ServerUpdateStorage actual = configuration.serverUpdateStorage(givenFactory);
         assertSame(givenStorage, actual);
     }
 }
