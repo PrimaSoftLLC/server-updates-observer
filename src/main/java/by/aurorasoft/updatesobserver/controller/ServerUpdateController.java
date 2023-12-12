@@ -43,4 +43,10 @@ public class ServerUpdateController {
                 .map(datetime -> ok(datetime, UPDATE_DOWNTIME_CACHE_DURATION))
                 .orElseGet(ResponseEntityUtil::noContent);
     }
+
+//    @DeleteMapping
+//    public ResponseEntity<?> removeByServerName(@RequestParam(name = "serverName") @NotBlank final String serverName) {
+//        this.updateService.removeByServerName(serverName);
+//        return ok()
+//    }
 }

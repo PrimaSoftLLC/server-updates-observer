@@ -324,12 +324,15 @@ public final class ServerUpdateStorageTest {
 
         final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
 
-        givenStorage.removeByServerName(firstGivenUpdateServerName);
+        final Optional<ServerUpdate> optionalActual = givenStorage.removeByServerName(firstGivenUpdateServerName);
+        assertTrue(optionalActual.isPresent());
+        final ServerUpdate actual = optionalActual.get();
+        assertEquals(firstGivenUpdate, actual);
 
-        final Collection<ServerUpdate> actual = givenStorage.findAll();
-        final Set<ServerUpdate> actualAsSet = new HashSet<>(actual);
-        final Set<ServerUpdate> expectedAsSet = Set.of(secondGivenUpdate);
-        assertEquals(expectedAsSet, actualAsSet);
+        final Collection<ServerUpdate> actualStorageUpdates = givenStorage.findAll();
+        final Set<ServerUpdate> actualStorageUpdatesAsSet = new HashSet<>(actualStorageUpdates);
+        final Set<ServerUpdate> expectedStorageUpdatesAsSet = Set.of(secondGivenUpdate);
+        assertEquals(expectedStorageUpdatesAsSet, actualStorageUpdatesAsSet);
     }
 
     @Test
@@ -355,12 +358,13 @@ public final class ServerUpdateStorageTest {
         final ServerUpdateStorage givenStorage = new ServerUpdateStorage(givenStorageMaxSize, givenUpdates);
         final String givenServerNameToRemoveUpdate = "not-existing-server";
 
-        givenStorage.removeByServerName(givenServerNameToRemoveUpdate);
+        final Optional<ServerUpdate> optionalActual = givenStorage.removeByServerName(givenServerNameToRemoveUpdate);
+        assertTrue(optionalActual.isEmpty());
 
-        final Collection<ServerUpdate> actual = givenStorage.findAll();
-        final Set<ServerUpdate> actualAsSet = new HashSet<>(actual);
-        final Set<ServerUpdate> expectedAsSet = new HashSet<>(givenUpdates);
-        assertEquals(expectedAsSet, actualAsSet);
+        final Collection<ServerUpdate> actualStorageUpdates = givenStorage.findAll();
+        final Set<ServerUpdate> actualStorageUpdatesAsSet = new HashSet<>(actualStorageUpdates);
+        final Set<ServerUpdate> expectedStorageUpdatesAsSet = new HashSet<>(givenUpdates);
+        assertEquals(expectedStorageUpdatesAsSet, actualStorageUpdatesAsSet);
     }
 
     @SuppressWarnings("unchecked")
