@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Duration;
 import java.time.Instant;
 
-import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/serverOutage")
 public class ServerOutageController {
-    private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(1, DAYS);
+    private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(30, SECONDS);
 
     private final ServerOutageFactory factory;
     private final ServerOutageService service;
