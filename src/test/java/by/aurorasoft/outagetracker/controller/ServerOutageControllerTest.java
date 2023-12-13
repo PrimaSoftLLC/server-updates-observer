@@ -131,8 +131,6 @@ public class ServerOutageControllerTest {
 
     @Test
     public void delete_ok() {
-        when(service.remove(same(GIVEN_SERVER_NAME))).thenReturn(Optional.of(givenUpdate));
-
         mockHttp.deleteExpectNoContent(GIVEN_SERVER_NAME);
     }
 

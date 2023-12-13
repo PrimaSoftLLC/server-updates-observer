@@ -16,12 +16,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public final class ServerOutageService {
     private final ServerOutageStorage storage;
+    private final ServerOutageBackupService backupService;
 
     /**
      * Saves a server outage serverOutage to the storage.
      */
     public void save(ServerOutage serverOutage) {
         storage.save(serverOutage);
+        backupService.backup();
     }
 
     /**
@@ -45,10 +47,9 @@ public final class ServerOutageService {
 
     /**
      * Removes a server outage record based on the server name.
-     *
-     * @return An Optional containing the removed ServerOutage if found.
      */
-    public Optional<ServerOutage> remove(String serverName) {
-        return storage.removeByServerName(serverName);
+    public void remove(String serverName) {
+        storage.removeByServerName(serverName);
+        backupService.backup();
     }
 }

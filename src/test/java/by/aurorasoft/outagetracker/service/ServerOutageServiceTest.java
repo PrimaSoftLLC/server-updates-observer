@@ -24,12 +24,14 @@ public final class ServerOutageServiceTest {
 
     @Mock
     private ServerOutageStorage mockedUpdateStorage;
+    @Mock
+    private ServerOutageBackupService mockedBackupService;
 
     private ServerOutageService updateService;
 
     @Before
     public void initializeUpdateService() {
-        updateService = new ServerOutageService(mockedUpdateStorage);
+        updateService = new ServerOutageService(mockedUpdateStorage, mockedBackupService);
     }
 
     @Test
@@ -39,6 +41,7 @@ public final class ServerOutageServiceTest {
         updateService.save(givenServerOutage);
 
         verify(mockedUpdateStorage, times(1)).save(same(givenServerOutage));
+        verify(mockedBackupService, times(1)).backup();
     }
 
     @Test
@@ -79,24 +82,27 @@ public final class ServerOutageServiceTest {
     }
 
     @Test
-    public void remove_ExistingServerName_ShouldReturnRemovedOutage() {
+    public void remove_ExistingServerName_ShouldRemoveOutage() {
         ServerOutage givenServerOutage = createUpdate(GIVEN_SERVER_NAME);
 
         when(mockedUpdateStorage.removeByServerName(GIVEN_SERVER_NAME))
                 .thenReturn(Optional.of(givenServerOutage));
 
-        Optional<ServerOutage> actual = updateService.remove(GIVEN_SERVER_NAME);
+        updateService.remove(GIVEN_SERVER_NAME);
+        Optional<Instant> actual = updateService.getDowntime(GIVEN_SERVER_NAME);
 
-        assertSame(givenServerOutage, actual.orElseThrow());
+        assertTrue(actual.isEmpty());
+
+        verify(mockedBackupService, times(1)).backup();
     }
 
     @Test
-    public void remove_NonExistingServerName_ShouldReturnEmpty() {
+    public void remove_NonExistingServerName_ShoulNotThrows() {
         when(mockedUpdateStorage.removeByServerName(GIVEN_SERVER_NAME)).thenReturn(Optional.empty());
 
-        Optional<ServerOutage> actual = updateService.remove(GIVEN_SERVER_NAME);
+        updateService.remove(GIVEN_SERVER_NAME);
 
-        assertTrue(actual.isEmpty());
+        verify(mockedBackupService, times(1)).backup();
     }
 
     private static ServerOutage createUpdate(String serverName) {
