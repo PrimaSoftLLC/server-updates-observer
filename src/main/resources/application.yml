@@ -1,7 +1,7 @@
 server-updates:
   file:
-    directory-path: /updates
-    file-name: server-updates.txt
+    directory-path: /backup
+    file-name: server-outage-backup.txt
   storage:
     max-size: 20
 
@@ -12,8 +12,8 @@ springdoc:
 server:
   servlet:
     context-path: /api/v1/serverOutageTracker
-  port: 8088
+  port: 8080
 
 spring:
   application:
-    name: updates-observer
+    name: server-outage-tracker
