@@ -20,7 +20,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @RequiredArgsConstructor
 @RequestMapping("/serverOutage")
 public class ServerOutageController {
-    private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(30, SECONDS);
+    private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(60, SECONDS);
 
     private final ServerOutageFactory factory;
     private final ServerOutageService service;
