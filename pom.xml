@@ -129,7 +129,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <imageName>cooll3r/updates-observer:${version}</imageName>
+                    <imageName>cooll3r/server-outage-tracker:${version}</imageName>
                     <baseImage>eclipse-temurin:17-jre-alpine</baseImage>
                     <entryPoint>["sh", "run.sh"]</entryPoint>
                     <!-- copy the service's jar file from target into the root directory of the image -->
@@ -137,7 +137,7 @@
                         <resource>
                             <targetPath>/</targetPath>
                             <directory>${project.build.directory}</directory>
-                            <include>server-updates-observer-1.0.0.jar</include>
+                            <include>server-outage-tracker-${version}.jar</include>
                         </resource>
                         <resource>
                             <directory>${project.basedir}/docker-run-scripts</directory>

@@ -1,0 +1,12 @@
+version: '3'
+services:
+  updates-observer:
+    image: cooll3r/server-outage-tracker:1.0.0
+    container_name: outage
+    environment:
+      UPDATES_FILE_DIRECTORY_PATH: ${APP_BACKUP_DIRECTORY}
+    volumes:
+        - ${TARGET_BACKUP_DIRECTORY}:${APP_BACKUP_DIRECTORY}
+    restart: always
+    ports:
+      - "10000:8080"
