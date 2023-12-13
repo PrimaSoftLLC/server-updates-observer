@@ -3,6 +3,7 @@ package by.aurorasoft.outagetracker.service;
 import by.aurorasoft.outagetracker.model.ServerOutage;
 import by.aurorasoft.outagetracker.storage.ServerOutageStorage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,6 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public final class ServerOutageService {
     private final ServerOutageStorage storage;
+    @Lazy
     private final ServerOutageBackupService backupService;
 
     /**
