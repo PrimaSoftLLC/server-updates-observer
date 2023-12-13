@@ -13,13 +13,13 @@ import java.util.Collection;
 import static by.aurorasoft.outagetracker.util.FileUtil.createFile;
 
 @Service
-public final class BackupServerOutageService {
+public final class ServerOutageBackupService {
     private final ServerOutageService service;
     private final ObjectMapper objectMapper;
     private final File updateFile;
 
 
-    public BackupServerOutageService(ServerOutageService service,
+    public ServerOutageBackupService(ServerOutageService service,
                                      ObjectMapper objectMapper,
                                      ServerOutageFilePath filePath) {
         this.service = service;

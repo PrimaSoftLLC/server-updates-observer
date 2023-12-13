@@ -3,7 +3,7 @@ package by.aurorasoft.outagetracker.service;
 import by.aurorasoft.outagetracker.base.AbstractContextTest;
 import by.aurorasoft.outagetracker.configuration.ServerOutageFilePath;
 import by.aurorasoft.outagetracker.model.ServerOutage;
-import by.aurorasoft.outagetracker.service.BackupServerOutageService.ServerOutageBackupException;
+import by.aurorasoft.outagetracker.service.ServerOutageBackupService.ServerOutageBackupException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public final class BackupServerOutageServiceTest extends AbstractContextTest {
     private ServerOutageFilePath serverOutageFilePath;
 
     @Autowired
-    private BackupServerOutageService backupService;
+    private ServerOutageBackupService backupService;
 
     @Test
     public void updatesShouldBeRefreshed() throws Exception {

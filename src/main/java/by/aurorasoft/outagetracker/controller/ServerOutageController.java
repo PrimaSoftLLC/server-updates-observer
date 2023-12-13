@@ -1,5 +1,6 @@
 package by.aurorasoft.outagetracker.controller;
 
+import by.aurorasoft.outagetracker.service.ServerOutageBackupService;
 import by.aurorasoft.outagetracker.service.ServerOutageService;
 import by.aurorasoft.outagetracker.service.factory.ServerOutageFactory;
 import by.aurorasoft.outagetracker.util.ResponseEntityUtil;
@@ -25,6 +26,8 @@ public class ServerOutageController {
     private final ServerOutageFactory factory;
     private final ServerOutageService service;
 
+    private final ServerOutageBackupService backupService;
+
     /**
      * Creates a server outage record.
      *
@@ -39,6 +42,7 @@ public class ServerOutageController {
                                        @RequestParam(name = "extraLifetimeMinutes", defaultValue = "10") @Min(1) long extraLifetimeMinutes) {
         var serverOutage = factory.create(serverName, downtimeMinutes, extraLifetimeMinutes);
         service.save(serverOutage);
+        backupService.backup();
         return ResponseEntityUtil.noContent();
     }
 
@@ -64,6 +68,7 @@ public class ServerOutageController {
     @DeleteMapping
     public ResponseEntity<Void> remove(@RequestParam(name = "serverName") @NotBlank String serverName) {
         service.remove(serverName);
+        backupService.backup();
         return ResponseEntityUtil.noContent();
     }
 }
