@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>by.aurorasoft</groupId>
-    <artifactId>server-updates-observer</artifactId>
+    <artifactId>server-outage-tracker</artifactId>
 
     <version>1.0.0</version>
 
     <packaging>jar</packaging>
 
-    <name>ServerUpdatesObserver</name>
+    <name>ServerOutageTracker</name>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

@@ -7,7 +7,7 @@ server-updates:
 
 server:
   servlet:
-    context-path: /updatesObserver
+    context-path: /api/v1/serverOutageTracker
 
 spring:
   application:
