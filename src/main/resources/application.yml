@@ -5,9 +5,14 @@ server-updates:
   storage:
     max-size: 20
 
+springdoc:
+  swagger-ui:
+    path: /api-docs.html
+
 server:
   servlet:
     context-path: /api/v1/serverOutageTracker
+  port: 8088
 
 spring:
   application:

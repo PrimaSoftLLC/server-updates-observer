@@ -15,7 +15,7 @@ import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 public final class ControllerExceptionHandler {
 
     @ExceptionHandler
-    public ResponseEntity<RestErrorResponse> handleException(final ConstraintViolationException exception) {
+    public ResponseEntity<RestErrorResponse> handleException(ConstraintViolationException exception) {
         return createResponseEntity(
                 exception,
                 Exception::getMessage,
@@ -24,7 +24,7 @@ public final class ControllerExceptionHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<RestErrorResponse> handleException(final Exception exception) {
+    public ResponseEntity<RestErrorResponse> handleException(Exception exception) {
         return createResponseEntity(
                 exception,
                 Exception::getMessage,
@@ -36,6 +36,7 @@ public final class ControllerExceptionHandler {
             E exception,
             ExceptionMessageExtractor<E> messageExtractor,
             HttpStatus httpStatus) {
+        exception.printStackTrace();
         String message = messageExtractor.extract(exception);
         RestErrorResponse errorResponse = createErrorResponse(message, httpStatus);
         return new ResponseEntity<>(errorResponse, httpStatus);
