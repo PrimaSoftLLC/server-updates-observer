@@ -1,7 +1,7 @@
 version: '3'
 services:
   updates-observer:
-    image: cooll3r/server-outage-tracker:1.1
+    image: cooll3r/server-outage-tracker:1.2
     container_name: outage
     environment:
       UPDATES_FILE_DIRECTORY_PATH: ${APP_BACKUP_DIRECTORY}
