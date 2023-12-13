@@ -35,7 +35,7 @@ public class ServerOutageController {
      */
     @PostMapping
     public ResponseEntity<Void> create(@RequestParam(name = "serverName") @NotBlank String serverName,
-                                       @RequestParam(name = "downtimeMinutes") @Min(1) long downtimeMinutes,
+                                       @RequestParam(name = "downtimeMinutes", defaultValue = "10") @Min(1) long downtimeMinutes,
                                        @RequestParam(name = "extraLifetimeMinutes", defaultValue = "10") @Min(1) long extraLifetimeMinutes) {
         var serverOutage = factory.create(serverName, downtimeMinutes, extraLifetimeMinutes);
         service.save(serverOutage);
