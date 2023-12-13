@@ -12,5 +12,4 @@ public class ServerOutageStorageConfiguration {
     public ServerOutageStorage serverOutageStorage(ServerOutageStorageFactory factory) {
         return factory.create();
     }
-
 }

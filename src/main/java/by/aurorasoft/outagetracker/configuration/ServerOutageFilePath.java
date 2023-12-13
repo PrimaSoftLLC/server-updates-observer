@@ -14,5 +14,4 @@ public class ServerOutageFilePath extends FilePath {
     public ServerOutageFilePath(String directoryPath, String fileName) {
         super(directoryPath, fileName);
     }
-
 }
