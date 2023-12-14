@@ -11,8 +11,7 @@ springdoc:
 
 server:
   servlet:
-    context-path: /api/v1/serverOutageTracker
-  port: 8080
+    context-path: /serverOutageTracker/api/v1
 
 spring:
   application:
