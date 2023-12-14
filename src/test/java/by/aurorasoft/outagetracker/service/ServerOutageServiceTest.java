@@ -24,14 +24,12 @@ public final class ServerOutageServiceTest {
 
     @Mock
     private ServerOutageStorage mockedUpdateStorage;
-    @Mock
-    private ServerOutageBackupService mockedBackupService;
 
     private ServerOutageService updateService;
 
     @Before
     public void initializeUpdateService() {
-        updateService = new ServerOutageService(mockedUpdateStorage, mockedBackupService);
+        updateService = new ServerOutageService(mockedUpdateStorage);
     }
 
     @Test
@@ -41,7 +39,6 @@ public final class ServerOutageServiceTest {
         updateService.save(givenServerOutage);
 
         verify(mockedUpdateStorage, times(1)).save(same(givenServerOutage));
-        verify(mockedBackupService, times(1)).backup();
     }
 
     @Test
@@ -92,8 +89,6 @@ public final class ServerOutageServiceTest {
         Optional<Instant> actual = updateService.getDowntime(GIVEN_SERVER_NAME);
 
         assertTrue(actual.isEmpty());
-
-        verify(mockedBackupService, times(1)).backup();
     }
 
     @Test
@@ -101,8 +96,6 @@ public final class ServerOutageServiceTest {
         when(mockedUpdateStorage.removeByServerName(GIVEN_SERVER_NAME)).thenReturn(Optional.empty());
 
         updateService.remove(GIVEN_SERVER_NAME);
-
-        verify(mockedBackupService, times(1)).backup();
     }
 
     private static ServerOutage createUpdate(String serverName) {

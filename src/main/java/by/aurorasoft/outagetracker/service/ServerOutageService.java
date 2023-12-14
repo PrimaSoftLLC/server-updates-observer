@@ -17,15 +17,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public final class ServerOutageService {
     private final ServerOutageStorage storage;
-    @Lazy
-    private final ServerOutageBackupService backupService;
 
     /**
      * Saves a server outage serverOutage to the storage.
      */
     public void save(ServerOutage serverOutage) {
         storage.save(serverOutage);
-        backupService.backup();
     }
 
     /**
@@ -52,6 +49,5 @@ public final class ServerOutageService {
      */
     public void remove(String serverName) {
         storage.removeByServerName(serverName);
-        backupService.backup();
     }
 }

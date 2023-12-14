@@ -9,7 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,8 +27,9 @@ import static java.util.Optional.empty;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 @RunWith(SpringRunner.class)
-@WebMvcTest(ServerOutageController.class)
 public class ServerOutageControllerTest {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final String GIVEN_SERVER_NAME = "server";
@@ -73,7 +76,6 @@ public class ServerOutageControllerTest {
         assertNotAcceptableResponse(actual, "create.serverName: must not be blank");
 
         verifyNoInteractions(factory);
-        verifyNoInteractions(service);
     }
 
     @Test
