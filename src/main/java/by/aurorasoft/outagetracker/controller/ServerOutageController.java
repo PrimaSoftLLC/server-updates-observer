@@ -19,6 +19,7 @@ import static java.time.temporal.ChronoUnit.SECONDS;
 @Validated
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping("/serverOutage")
 public class ServerOutageController {
     private static final Duration UPDATE_DOWNTIME_CACHE_DURATION = Duration.of(60, SECONDS);
