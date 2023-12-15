@@ -16,3 +16,7 @@ server:
 spring:
   application:
     name: server-outage-tracker
+
+logging:
+  level:
+    org.springframework.web: DEBUG
